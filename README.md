@@ -89,6 +89,10 @@ request is blocked without inference.
 
 The adapter and UI pass 67 offline tests, including HTTP request serialization,
 provider selection, cache isolation metadata, key exclusion from cache files,
-bounded citation repair, and quota/error handling. Live Groq inference and the
-actual Community Cloud deployment still require account setup and a private API
-key; neither is claimed complete by these offline checks.
+bounded citation repair, and quota/error handling. On 2026-11-02, a live MiniLM
+retrieval and Groq assessment for the public corpus example “Early diabetic
+kidney disease can occur without symptoms” returned supported with one exact
+validated citation and no validation errors. This is a deployment smoke check,
+not a model evaluation or evidence of clinical reliability. The private GitHub
+deployment repository is prepared; the public Community Cloud deployment still
+requires completing its account connection and app setup.
