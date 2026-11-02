@@ -1,0 +1,192 @@
+from __future__ import annotations
+
+import html
+import re
+import os
+from urllib.parse import urlparse
+from pathlib import Path
+
+import streamlit as st
+from dotenv import load_dotenv
+
+from glucotrust.assess import create_assessor
+from glucotrust.corpus import load_corpus
+from glucotrust.feedback import save_feedback
+from glucotrust.pipeline import assess_claim, is_dosing_request
+from glucotrust.retrieve import DenseRetriever
+from glucotrust.literature import EuropePMCLiterature
+
+ROOT = Path(__file__).resolve().parent
+load_dotenv(ROOT / ".env")
+st.set_page_config(page_title="GlucoTrust Lite", page_icon="🔎", layout="wide")
+# Community Cloud supplies root-level secrets; load only this app's settings.
+try:
+    for setting in ("GLUCOTRUST_PROVIDER", "GROQ_API_KEY", "GLUCOTRUST_GROQ_MODEL",
+                    "GLUCOTRUST_GROQ_REVISION", "GLUCOTRUST_TIMEOUT_SECONDS", "GLUCOTRUST_FEEDBACK_PATH"):
+        if setting in st.secrets:
+            os.environ[setting] = str(st.secrets[setting])
+except FileNotFoundError:
+    pass
+st.html('<style>' + (ROOT / 'assets/style.css').read_text() + '</style>')
+
+
+@st.cache_resource
+def resources(corpus_version):
+    passages = load_corpus(ROOT / "data/curated/passages.jsonl")
+    return DenseRetriever(passages, cache_dir=ROOT / "data/curated")
+
+
+def highlighted(text, quotes):
+    # Escape all corpus/model data before inserting our own markup.
+    spans = []
+    for quote in quotes:
+        pattern = r"\s+".join(re.escape(token) for token in quote.split())
+        if pattern:
+            spans.extend((match.start(), match.end()) for match in re.finditer(pattern, text))
+    merged = []
+    for start, end in sorted(spans):
+        if merged and start <= merged[-1][1]:
+            merged[-1] = (merged[-1][0], max(end, merged[-1][1]))
+        else:
+            merged.append((start, end))
+    output, cursor = [], 0
+    for start, end in merged:
+        output.extend([html.escape(text[cursor:start]), "<mark>" + html.escape(text[start:end]) + "</mark>"])
+        cursor = end
+    output.append(html.escape(text[cursor:]))
+    return '<div style="white-space:pre-wrap;line-height:1.7">' + "".join(output) + "</div>"
+
+
+# Read metadata without initializing the embedding model on the landing page.
+@st.cache_data
+def corpus_record_count(version):
+    return len({passage.qid for passage in load_corpus(ROOT / "data/curated/passages.jsonl")})
+
+
+corpus_path = ROOT / "data/curated/passages.jsonl"
+record_count = corpus_record_count(corpus_path.stat().st_mtime_ns)
+st.html('<div class="site-notice"><span class="notice-icon" aria-hidden="true">ⓘ</span>'
+        'Educational research prototype. Not a clinical decision-support tool. '
+        'Do not use it to make health or treatment decisions.</div>')
+st.html(f'''<div class="site-header"><div class="header-inner">
+    <div class="brand"><span class="brand-pulse" aria-hidden="true">ϟ</span><div><div class="brand-name">GlucoTrust Lite</div>
+    <div class="brand-subtitle">Evidence check for diabetes-related claims</div></div></div>
+    <div class="corpus-badge">Corpus: {record_count} MedQuAD records · diabetes subset</div>
+    </div></div>''')
+host = os.getenv("GLUCOTRUST_OLLAMA_HOST", "http://localhost:11434")
+local = urlparse(host).hostname in {"localhost", "127.0.0.1", "::1"}
+hosted = os.getenv("GLUCOTRUST_PROVIDER", "ollama").strip().lower() == "groq"
+with st.container(key="claim-card"):
+    with st.form("claim_form"):
+        st.title("Check a claim against the evidence")
+        st.write("Enter a diabetes-related scientific or medical claim. The app retrieves the three closest "
+                 "passages from the corpus and assesses whether they support it, contradict it, or leave insufficient evidence to decide.")
+        claim = st.text_area("Claim", placeholder="A low prediction error means a glucose-forecasting model is clinically safe.", max_chars=2000)
+        search_literature = st.checkbox("Search research literature if local evidence is insufficient", value=True)
+        st.caption("When enabled, topic keywords are sent to Europe PMC. Retrieved abstracts and open-access excerpts are assessed by the configured model.")
+        st.caption("Do not enter personal health information. "
+                   + ("Claims and evidence are sent to Groq for assessment." if hosted else
+                      "Claims and evidence are processed locally by Ollama." if local else
+                      "Claims and evidence are sent to the configured Ollama server for assessment.")
+                   + " Reviewer feedback is stored on the app server.")
+        method, action = st.columns([3, 1], vertical_alignment="bottom")
+        with method:
+            st.caption("Semantic retrieval · Top 3 local passages · Optional research fallback")
+        with action:
+            submitted = st.form_submit_button("Assess claim →", type="primary", width="stretch")
+if submitted:
+    st.session_state.pop("result", None)
+    st.session_state.pop("feedback_saved", None)
+    if not claim.strip():
+        st.error("Enter a claim first.")
+    elif is_dosing_request(claim):
+        st.info("This prototype cannot provide personal treatment or insulin dosing advice.")
+    else:
+        try:
+            with st.spinner("Retrieving passages and assessing evidence…"):
+                corpus = ROOT / "data/curated/passages.jsonl"
+                retriever = resources(corpus.stat().st_mtime_ns)
+                st.session_state.result = assess_claim(claim, retriever, create_assessor(cache_dir=ROOT / "data/cache/assessments"),
+                    literature=EuropePMCLiterature() if search_literature else None)
+        except Exception as exc:
+            st.error(f"Could not load the retrieval pipeline ({type(exc).__name__}). Check setup and the embedding-model download in README.md.")
+result = st.session_state.get("result")
+if result:
+    summary_column, evidence_column = st.columns([1, 2], gap="large")
+    with summary_column:
+        with st.container(key="assessment-card"):
+            st.html('<div class="eyebrow">Assessment</div>')
+            if result.assessment:
+                assessment = result.assessment
+                labels = {"supported": "Supported", "contradicted": "Contradicted", "insufficient": "Insufficient evidence"}
+                st.html(f'<div class="verdict {assessment.verdict}">{labels[assessment.verdict]}</div>')
+                st.html('<div class="verdict-scale" aria-label="Assessment categories">' + ''.join(
+                    f'<div class="scale-item {value}{" active" if value == assessment.verdict else ""}">'
+                    f'{label}</div>' for value, label in [("supported", "Supported"), ("insufficient", "Insufficient"), ("contradicted", "Contradicted")]
+                ) + '</div>')
+                st.subheader("Why")
+                st.write(assessment.explanation)
+                if assessment.validation_failed:
+                    st.warning("The assessment’s citations could not all be verified against the retrieved passages. The result is shown as insufficient evidence.")
+                    with st.expander("Citation validation details"):
+                        for error in assessment.validation_errors:
+                            st.text(error)
+            else:
+                st.subheader("Assessment unavailable")
+                st.info(result.message)
+            with st.expander("Claim assessed"):
+                st.write(result.claim)
+            st.divider()
+            st.caption(f"Model: {result.model} · Prompt: {result.prompt_version}")
+            st.caption("Retrieval: Semantic · MiniLM")
+        if result.assessment:
+            with st.container(key="feedback-card"):
+                with st.form("feedback"):
+                    st.subheader("Your review")
+                    st.caption("Is this assessment correct? Reviews are saved on the app server for evaluation.")
+                    correct = st.radio("Is this assessment correct?", ["Correct", "Incorrect"], horizontal=True, label_visibility="collapsed")
+                    note = st.text_area("Optional reviewer note", placeholder="What should the model have noticed?", max_chars=4000)
+                    if st.form_submit_button("Save feedback", disabled=bool(st.session_state.get("feedback_saved"))):
+                        try:
+                            feedback_path = Path(os.getenv("GLUCOTRUST_FEEDBACK_PATH", str(ROOT / "feedback.jsonl")))
+                            save_feedback(result, correct == "Correct", note, feedback_path)
+                            st.session_state.feedback_saved = True
+                            st.success("Feedback saved.")
+                        except OSError:
+                            st.error("Feedback could not be saved. Check file permissions.")
+    with evidence_column:
+        with st.container(key="evidence-list"):
+            st.html(f'<div class="evidence-heading"><h2>Evidence used</h2>'
+                    f'<span>{len(result.hits)} retrieved passages</span></div>')
+            if result.literature:
+                st.info(result.literature.get("note", "Literature search attempted."))
+                if result.literature["status"] == "assessed":
+                    st.caption("Assessment includes externally retrieved research evidence. This search is not a systematic review.")
+                else:
+                    st.caption("The local assessment is retained.")
+                with st.expander("Literature search details"):
+                    st.write("Status: " + result.literature["status"])
+                    st.write(result.literature.get("queries", []))
+                    st.write("Initial local assessment", result.literature["local_assessment"])
+            for index, hit in enumerate(result.hits, 1):
+                passage = hit.passage
+                with st.container(border=True, key=f"evidence-card-{index}"):
+                    st.html(f'<div class="evidence-header"><span class="evidence-rank">{index}</span>'
+                            f'<span class="evidence-question">{html.escape(passage.question)}</span>'
+                            f'<span class="evidence-score">Retrieval score {hit.score:.3f}</span></div>')
+                    st.divider()
+                    quotes = [c.quote for c in result.assessment.citations if c.passage_id == passage.passage_id] if result.assessment else []
+                    st.markdown(highlighted(passage.text, quotes), unsafe_allow_html=True)
+                    st.divider()
+                    with st.container(key=f"source-footer-{index}"):
+                        st.write(f"Source: {passage.source}")
+                        badge = "URL and content verified; not a guarantee of current guidance" if passage.provenance_status == "url_verified" else "Archived dataset record — not verified current guidance"
+                        if passage.provenance_status == "retrieved":
+                            badge = "Retrieved research excerpt — not independently verified or a clinical guideline"
+                        st.caption(badge + (f" · Checked {passage.checked_on}" if passage.checked_on else " · Not yet checked"))
+                        st.caption(f"Record: {passage.passage_id}")
+                        if passage.source_type == "research":
+                            st.info("Research source — not a clinical guideline")
+                        if passage.url:
+                            st.link_button("Open original source ↗", passage.url)
+            st.caption("Passages are shown as retrieved, with validated quotes highlighted. Source labels describe provenance, not clinical reliability.")

@@ -1,0 +1,61 @@
+{
+  "checked_on": "2026-11-02",
+  "checks": [
+    {
+      "url": "http://www.niddk.nih.gov/health-information/health-topics/Diabetes/4-steps-manage-diabetes/Pages/publicationdetail.aspx",
+      "reachable": false,
+      "status": 404,
+      "final_url": "https://www.niddk.nih.gov/health-information/health-topics/Diabetes/4-steps-manage-diabetes/Pages/publicationdetail.aspx",
+      "error": ""
+    },
+    {
+      "url": "http://www.niddk.nih.gov/health-information/health-topics/Diabetes/causes-diabetes/Pages/index.aspx",
+      "reachable": false,
+      "status": 404,
+      "final_url": "https://www.niddk.nih.gov/health-information/health-topics/Diabetes/causes-diabetes/Pages/index.aspx",
+      "error": ""
+    },
+    {
+      "url": "http://www.niddk.nih.gov/health-information/health-topics/Diabetes/diabetes-heart-disease-stroke/Pages/index.aspx",
+      "reachable": false,
+      "status": 404,
+      "final_url": "https://www.niddk.nih.gov/health-information/health-topics/Diabetes/diabetes-heart-disease-stroke/Pages/index.aspx",
+      "error": ""
+    },
+    {
+      "url": "http://www.niddk.nih.gov/health-information/health-topics/Diabetes/diabetic-kidney-disease/Pages/index.aspx",
+      "reachable": false,
+      "status": 404,
+      "final_url": "https://www.niddk.nih.gov/health-information/health-topics/Diabetes/diabetic-kidney-disease/Pages/index.aspx",
+      "error": ""
+    },
+    {
+      "url": "http://www.niddk.nih.gov/health-information/health-topics/Diabetes/diabetic-neuropathies-nerve-damage-diabetes/Pages/diabetic-neuropathies-nerve-damage.aspx",
+      "reachable": false,
+      "status": 404,
+      "final_url": "https://www.niddk.nih.gov/health-information/health-topics/Diabetes/diabetic-neuropathies-nerve-damage-diabetes/Pages/diabetic-neuropathies-nerve-damage.aspx",
+      "error": ""
+    },
+    {
+      "url": "http://www.niddk.nih.gov/health-information/health-topics/Diabetes/diagnosis-diabetes-prediabetes/Pages/index.aspx",
+      "reachable": false,
+      "status": 404,
+      "final_url": "https://www.niddk.nih.gov/health-information/health-topics/Diabetes/diagnosis-diabetes-prediabetes/Pages/index.aspx",
+      "error": ""
+    },
+    {
+      "url": "http://www.niddk.nih.gov/health-information/health-topics/Diabetes/financial-help-diabetes-care/Pages/index.aspx",
+      "reachable": false,
+      "status": 404,
+      "final_url": "https://www.niddk.nih.gov/health-information/health-topics/Diabetes/financial-help-diabetes-care/Pages/index.aspx",
+      "error": ""
+    },
+    {
+      "url": "http://www.niddk.nih.gov/health-information/health-topics/Diabetes/type-2-diabetes-taking-steps-lower-your-risk-diabetes/Pages/index.aspx",
+      "reachable": false,
+      "status": 404,
+      "final_url": "https://www.niddk.nih.gov/health-information/health-topics/Diabetes/type-2-diabetes-taking-steps-lower-your-risk-diabetes/Pages/index.aspx",
+      "error": ""
+    }
+  ]
+}

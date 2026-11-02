@@ -1,0 +1,15 @@
+{"query_id":"rq-01","query":"What causes type 1 diabetes?","gold_passage_ids":["5_NIDDK_QA:0000027-2#p1"],"paraphrased":false}
+{"query_id":"rq-02","query":"What are the symptoms of diabetic kidney disease?","gold_passage_ids":["5_NIDDK_QA:0000033-6#p1"],"paraphrased":false}
+{"query_id":"rq-03","query":"What is prediabetes?","gold_passage_ids":["5_NIDDK_QA:0000035-2#p1","5_NIDDK_QA:0000032-2#p1"],"paraphrased":false}
+{"query_id":"rq-04","query":"What causes type 2 diabetes?","gold_passage_ids":["5_NIDDK_QA:0000027-3#p1"],"paraphrased":false}
+{"query_id":"rq-05","query":"What is peripheral neuropathy?","gold_passage_ids":["5_NIDDK_QA:0000034-6#p1"],"paraphrased":false}
+{"query_id":"rq-06","query":"What is autonomic neuropathy?","gold_passage_ids":["5_NIDDK_QA:0000034-7#p1"],"paraphrased":false}
+{"query_id":"rq-07","query":"What are the treatments for diabetic kidney failure?","gold_passage_ids":["5_NIDDK_QA:0000033-10#p1"],"paraphrased":false}
+{"query_id":"rq-08","query":"Can children develop the form of diabetes usually associated with adults?","gold_passage_ids":["5_NIDDK_QA:0000022-1#p1"],"paraphrased":true}
+{"query_id":"rq-09","query":"Can damage to the renal system from high blood sugar be silent at first?","gold_passage_ids":["5_NIDDK_QA:0000033-6#p1"],"paraphrased":true}
+{"query_id":"rq-10","query":"Why does the body's defense system destroy the cells that make insulin?","gold_passage_ids":["5_NIDDK_QA:0000027-2#p1"],"paraphrased":true}
+{"query_id":"rq-11","query":"How can diabetes damage nerves and cause loss of feeling in the limbs?","gold_passage_ids":["5_NIDDK_QA:0000034-1#p1","5_NIDDK_QA:0000034-6#p1"],"paraphrased":true}
+{"query_id":"rq-12","query":"Where are the body's two urine-filtering organs situated?","gold_passage_ids":["5_NIDDK_QA:0000033-2#p1"],"paraphrased":true}
+{"query_id":"rq-13","query":"Can losing a little weight and moving more delay the onset of high blood sugar disease?","gold_passage_ids":["5_NIDDK_QA:0000022-2#p1","5_NIDDK_QA:0000035-8#p1","5_NIDDK_QA:0000032-2#p1"],"paraphrased":true}
+{"query_id":"rq-14","query":"What happens when the body's tissues stop responding properly to the hormone that moves sugar into cells?","gold_passage_ids":["5_NIDDK_QA:0000027-3#p1"],"paraphrased":true}
+{"query_id":"rq-15","query":"Can nerve injury interfere with digestion and regulation of arterial pressure?","gold_passage_ids":["5_NIDDK_QA:0000034-7#p1"],"paraphrased":true}
