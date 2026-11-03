@@ -85,8 +85,6 @@ def retry_summary_translation():
     st.session_state.pop("summary_translation", None)
 
 
-st.button("Show original / English" if st.session_state.get("portuguese_display") else "Traduzir título e resumo para português",
-          key="toggle_portuguese", on_click=toggle_portuguese)
 portuguese_display = st.session_state.get("portuguese_display", False)
 
 
@@ -104,6 +102,11 @@ st.html(f'''<div class="site-header"><div class="header-inner">
     <div class="brand-subtitle">{ui_text("Evidence check for diabetes-related claims", "Verificação de evidências sobre afirmações relacionadas ao diabetes")}</div></div></div>
     <div class="corpus-badge">Corpus: {record_count} MedQuAD records · diabetes subset</div>
     </div></div>''')
+# Keep interactive controls below Streamlit's fixed toolbar and the custom header.
+# Accessibility actions can activate an obscured button; mouse clicks cannot.
+with st.container(key="language-controls"):
+    st.button("Show original / English" if portuguese_display else "Traduzir título e resumo para português",
+              key="toggle_portuguese", on_click=toggle_portuguese)
 host = os.getenv("GLUCOTRUST_OLLAMA_HOST", "http://localhost:11434")
 local = urlparse(host).hostname in {"localhost", "127.0.0.1", "::1"}
 hosted = os.getenv("GLUCOTRUST_PROVIDER", "ollama").strip().lower() == "groq"

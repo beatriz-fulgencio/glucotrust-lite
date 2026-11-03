@@ -88,3 +88,13 @@ a failed request, quota messaging and retrying through the language toggle.
 The live title switch was observed working. A live English assessment completed,
 but its summary-translation test was interrupted by a page reload; no successful
 live summary translation is claimed from that attempt.
+
+## Mouse-click layout correction
+
+The translation control was the first element at the top of a zero-top-padding
+page, overlapping Streamlit's fixed transparent toolbar. Accessibility activation
+could toggle it, which did not establish that pointer clicks reached the button.
+Following the report that the button could not be clicked, it was moved into a
+separate language-controls container **below the custom site header**. Automated
+state tests do not establish browser hit-testing; live pointer verification is
+recorded separately when available.

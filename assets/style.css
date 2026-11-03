@@ -75,3 +75,6 @@
   .evidence-score { margin-left: 42px; }
   .evidence-heading { flex-wrap: wrap; gap: 4px; }
 }
+
+/* The display-language control belongs below the header, not under stHeader. */
+.st-key-language-controls { margin-bottom: 16px; }
