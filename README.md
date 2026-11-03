@@ -1,5 +1,7 @@
 # GlucoTrust Lite
 
+Deployed at https://glucotrust-lite.streamlit.app
+
 Evidence-grounded diabetes claim assessment research prototype. Educational use only; do not enter personal health information.
 
 This private deployment copy includes the app, curated corpus with attribution, tests, and hosting instructions. Generated evaluation outputs and local runtime data are excluded.
