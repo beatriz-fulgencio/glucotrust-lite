@@ -120,7 +120,7 @@ secrets, feedback, and caches out of Git. Reinstall the package after source edi
 .venv/bin/python -m scripts.run_eval  # offline replay of the historical run
 ```
 
-A GitHub Actions workflow is configured for the offline suite on Python 3.12, without provider credentials or model-weight downloads; its first hosted run is pending. [Bilingual verification](docs/bilingual-input.md): 92 tests passed. See [hosted setup](docs/free-cloud-deployment.md),
+A GitHub Actions workflow is configured for the offline suite on Python 3.12, without provider credentials or model-weight downloads; its first hosted run is pending. [Bilingual verification](docs/bilingual-input.md): 94 tests passed. See [hosted setup](docs/free-cloud-deployment.md),
 [Docker/Ollama deployment](docs/deployment.md), and
 [local configuration details](docs/local-setup.md).
 

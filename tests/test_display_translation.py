@@ -89,3 +89,29 @@ def test_summary_quotes_are_restored_exactly_or_translation_rejected(tmp_path, p
         else:
             with pytest.raises(AssessmentUnavailable,match='preserve source quotations'):
                 assessor.translate_summary('The source states: '+quote,quotes=[quote])
+
+
+def test_failed_translation_can_be_retried_without_reassessment(passage, monkeypatch):
+    at,assessor,retriever,original=app_with_result(passage,monkeypatch,failure=True)
+    at.button(key='toggle_portuguese').click().run()
+    assert any('Não foi possível traduzir' in x.value for x in at.warning)
+    assessor.translate_summary.side_effect=None
+    at.button(key='retry_summary_translation').click().run()
+    assert not at.exception
+    assert any('A insulina ajuda' in x.value for x in at.markdown)
+    assert assessor.translate_summary.call_count==2
+    assessor.assess.assert_called_once()
+    retriever.search.assert_called_once()
+    assert at.session_state.result.assessment.explanation==original.explanation
+
+
+def test_toggle_back_retries_failed_translation_and_explains_quota(passage,monkeypatch):
+    at,assessor,_,_=app_with_result(passage,monkeypatch)
+    assessor.translate_summary.side_effect=AssessmentUnavailable("The hosted model's usage limit has been reached.")
+    at.button(key='toggle_portuguese').click().run()
+    assert any('limite de uso' in x.value for x in at.warning)
+    at.button(key='toggle_portuguese').click().run()
+    assessor.translate_summary.side_effect=None
+    at.button(key='toggle_portuguese').click().run()
+    assert any('A insulina ajuda' in x.value for x in at.markdown)
+    assert assessor.translate_summary.call_count==2

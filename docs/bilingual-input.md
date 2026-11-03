@@ -72,3 +72,19 @@ protected English source quote. An initial attempt without protection translated
 the quotation despite its prompt; the protected implementation addresses that
 observed failure. No new classification score is claimed. See the separate
 [Portuguese-source feasibility review](portuguese-sources.md) for BVS/LILACS and SciELO.
+
+## Translation retry correction
+
+A failed summary translation previously stayed cached without a retry action.
+The title could switch while the summary remained in English, and toggling the
+button again reused the failure. The app now offers **Tentar traduzir o resumo
+novamente** and clears failed translations when switching back to Portuguese.
+Successful translations remain cached; retries do not rerun retrieval or claim
+assessment. Quota, configuration and quote-preservation failures now have clearer
+Portuguese messages, and sanitized translation failure reasons are logged server-side.
+
+Verification: **94 offline tests passed**. Regression tests cover recovery after
+a failed request, quota messaging and retrying through the language toggle.
+The live title switch was observed working. A live English assessment completed,
+but its summary-translation test was interrupted by a page reload; no successful
+live summary translation is claimed from that attempt.

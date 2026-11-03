@@ -77,6 +77,12 @@ def current_references(version):
 
 def toggle_portuguese():
     st.session_state.portuguese_display = not st.session_state.get("portuguese_display", False)
+    if st.session_state.portuguese_display and st.session_state.get("summary_translation", {}).get("error"):
+        st.session_state.pop("summary_translation", None)
+
+
+def retry_summary_translation():
+    st.session_state.pop("summary_translation", None)
 
 
 st.button("Show original / English" if st.session_state.get("portuguese_display") else "Traduzir título e resumo para português",
@@ -175,6 +181,7 @@ if result:
                                 text = create_assessor(cache_dir=ROOT / "data/cache/assessments").translate_summary(assessment.explanation, quotes=[c.quote for c in assessment.citations])
                             saved = {"original": assessment.explanation, "text": text}
                         except AssessmentUnavailable as exc:
+                            logging.getLogger(__name__).warning("Summary translation unavailable: %s", exc)
                             saved = {"original": assessment.explanation, "error": str(exc)}
                         st.session_state.summary_translation = saved
                     if "text" in saved:
@@ -183,7 +190,17 @@ if result:
                         with st.expander("Resumo original"):
                             st.write(assessment.explanation)
                     else:
-                        st.warning("Não foi possível traduzir o resumo. A avaliação original foi mantida.")
+                        error = saved.get("error", "")
+                        if "usage limit" in error:
+                            reason = "O limite de uso do provedor foi atingido. Aguarde antes de tentar novamente."
+                        elif "authentication" in error or "not configured" in error:
+                            reason = "O serviço de tradução precisa ser configurado pelo responsável pelo aplicativo."
+                        elif "preserve source quotations" in error:
+                            reason = "A tradução não preservou as citações e foi descartada."
+                        else:
+                            reason = "O serviço de tradução não concluiu a solicitação."
+                        st.warning("Não foi possível traduzir o resumo. " + reason + " A avaliação original foi mantida.")
+                        st.button("Tentar traduzir o resumo novamente", key="retry_summary_translation", on_click=retry_summary_translation)
                 st.write(display_explanation)
                 if assessment.verdict == "insufficient":
                     st.caption(ui_text("A conclusion could not be established from the available evidence. This does not prove the claim false.", "Não foi possível estabelecer uma conclusão com as evidências disponíveis. Isso não prova que a afirmação seja falsa."))
