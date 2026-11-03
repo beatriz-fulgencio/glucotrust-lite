@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import html
+import json
 import re
 import os
 from urllib.parse import urlparse
@@ -63,6 +64,11 @@ def corpus_record_count(version):
     return len({passage.qid for passage in load_corpus(ROOT / "data/curated/passages.jsonl")})
 
 
+@st.cache_data
+def current_references(version):
+    return json.loads((ROOT / "data/curated/current_references.json").read_text())["references"]
+
+
 corpus_path = ROOT / "data/curated/passages.jsonl"
 record_count = corpus_record_count(corpus_path.stat().st_mtime_ns)
 st.html('<div class="site-notice"><span class="notice-icon" aria-hidden="true">ⓘ</span>'
@@ -82,6 +88,8 @@ with st.container(key="claim-card"):
         st.write("Enter a diabetes-related scientific or medical claim. The app retrieves the three closest "
                  "passages from the corpus and assesses whether they support it, contradict it, or leave insufficient evidence to decide.")
         claim = st.text_area("Claim", placeholder="A low prediction error means a glucose-forecasting model is clinically safe.", max_chars=2000)
+        input_language = st.selectbox("Input language / Idioma da afirmação", ["English", "Português"])
+        st.caption("Portuguese claims use an English search translation; explanations follow the claim language. Source quotations remain verbatim. / Afirmações em português usam tradução para busca; as citações mantêm o idioma original.")
         search_literature = st.checkbox("Search research literature if local evidence is insufficient", value=True)
         st.caption("When enabled, topic keywords are sent to Europe PMC. Retrieved abstracts and open-access excerpts are assessed by the configured model.")
         st.caption("Do not enter personal health information. "
@@ -107,7 +115,8 @@ if submitted:
                 corpus = ROOT / "data/curated/passages.jsonl"
                 retriever = resources(corpus.stat().st_mtime_ns)
                 st.session_state.result = assess_claim(claim, retriever, create_assessor(cache_dir=ROOT / "data/cache/assessments"),
-                    literature=EuropePMCLiterature() if search_literature else None)
+                    literature=EuropePMCLiterature() if search_literature else None,
+                    language="pt" if input_language == "Português" else "en")
         except Exception as exc:
             st.error(f"Could not load the retrieval pipeline ({type(exc).__name__}). Check setup and the embedding-model download in README.md.")
 result = st.session_state.get("result")
@@ -115,6 +124,11 @@ if result:
     summary_column, evidence_column = st.columns([1, 2], gap="large")
     with summary_column:
         with st.container(key="assessment-card"):
+            translation = result.run.get("query_translation")
+            if translation:
+                with st.expander("English search translation / Tradução usada na busca"):
+                    st.write(translation["english_query"])
+                    st.caption("Used for retrieval only; the original claim is assessed. / Usada apenas na busca; a afirmação original é avaliada.")
             st.html('<div class="eyebrow">Assessment</div>')
             if result.assessment:
                 assessment = result.assessment
@@ -126,6 +140,8 @@ if result:
                 ) + '</div>')
                 st.subheader("Why")
                 st.write(assessment.explanation)
+                if assessment.verdict == "insufficient":
+                    st.caption("A conclusion could not be established from the available evidence. This does not prove the claim false.")
                 if assessment.validation_failed:
                     st.warning("The assessment’s citations could not all be verified against the retrieved passages. The result is shown as insufficient evidence.")
                     with st.expander("Citation validation details"):
@@ -185,8 +201,17 @@ if result:
                             badge = "Retrieved research excerpt — not independently verified or a clinical guideline"
                         st.caption(badge + (f" · Checked {passage.checked_on}" if passage.checked_on else " · Not yet checked"))
                         st.caption(f"Record: {passage.passage_id}")
+                        if passage.provenance_status == "archived_record":
+                            st.caption("The original link may no longer work. This is historical dataset content.")
                         if passage.source_type == "research":
                             st.info("Research source — not a clinical guideline")
                         if passage.url:
                             st.link_button("Open original source ↗", passage.url)
+                        reference_path = ROOT / "data/curated/current_references.json"
+                        for reference in current_references(reference_path.stat().st_mtime_ns):
+                            if passage.passage_id in reference["passage_ids"]:
+                                st.link_button("Current reference: " + reference["title"], reference["url"])
+                                st.caption(f"Content compared on {reference['checked_on']} by an agent · "
+                                           f"Scope: {reference['statement']} {reference['scope_limit']} "
+                                           "This linked page was not supplied to the model; the assessment uses the displayed passages.")
             st.caption("Passages are shown as retrieved, with validated quotes highlighted. Source labels describe provenance, not clinical reliability.")

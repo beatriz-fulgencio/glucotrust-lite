@@ -87,6 +87,4 @@ bounded citation repair, and quota/error handling. On 2026-11-02, a live MiniLM
 retrieval and Groq assessment for the public corpus example “Early diabetic
 kidney disease can occur without symptoms” returned supported with one exact
 validated citation and no validation errors. This is a deployment smoke check,
-not a model evaluation or evidence of clinical reliability. The private GitHub
-deployment repository is prepared; the public Community Cloud deployment still
-requires completing its account connection and app setup.
+not a model evaluation or evidence of clinical reliability. On 2026-11-03, the Community Cloud URL rendered and Groq assessments were observed in browser smoke checks. See [the current verification record](demo-verification.md) for tested flows and limitations. The setup instructions above remain useful for a new deployment; they do not imply the current app is undeployed.

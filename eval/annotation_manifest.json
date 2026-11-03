@@ -1,0 +1,14 @@
+{
+  "review_status": "provisional_ai_authored_requires_independent_human_review",
+  "live_test_run_performed": true,
+  "files": {
+    "eval/claims_dev.jsonl": "637708f12f59b2ef67a6f65571f0eb6a0b2f0d86132b0cf7b09ad6cf8e084de1",
+    "eval/claims_test.jsonl": "fe7ac6ddcb9bc1fd0a65c870f29642fed28b6863124e4970e7a2150ad4969493",
+    "eval/retrieval_queries.jsonl": "e536bdb42ce0b55b14fb64b4a5f199bfe012dfa004d53b08317325d923484d80"
+  },
+  "run_records": [
+    "eval/results/assessments.jsonl",
+    "eval/results/2026-11-03-qwen-prompt-2.1/test.jsonl"
+  ],
+  "note": "Historical prompt 2.0.0 and current prompt 2.1.0 results are reported separately; original annotation hashes are unchanged."
+}

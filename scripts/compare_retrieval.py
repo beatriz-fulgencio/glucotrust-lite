@@ -1,6 +1,8 @@
 import argparse
 import json
 import hashlib
+import platform
+from datetime import datetime, timezone
 from pathlib import Path
 
 from glucotrust.corpus import fingerprint, load_corpus
@@ -12,7 +14,10 @@ def main():
     parser = argparse.ArgumentParser(description="Compare BM25 and dense Recall@3")
     parser.add_argument("--queries", type=Path, default=Path("eval/retrieval_queries.jsonl"))
     parser.add_argument("--bm25-only", action="store_true")
+    parser.add_argument("--output-dir", type=Path, help="New experiment directory; never overwrites results")
     args = parser.parse_args()
+    output_dir = args.output_dir or Path("eval/results") / datetime.now(timezone.utc).strftime("retrieval-%Y%m%dT%H%M%S%fZ")
+    output_dir.mkdir(parents=True, exist_ok=False)
     passages = [p for p in load_corpus("data/curated/passages.jsonl") if p.source_type == "dataset"]
     queries = [json.loads(line) for line in args.queries.read_text().splitlines() if line.strip()]
     retrievers = {"bm25": BM25Retriever(passages)}
@@ -27,11 +32,12 @@ def main():
     summary = {name: {subset: recall_at_k([row["gold_passage_ids"] for row in rows if subset == "overall" or row.get("paraphrased")],
                                         [row[name] for row in rows if subset == "overall" or row.get("paraphrased")])
                       for subset in ("overall", "paraphrased")} for name in retrievers}
-    output = dict(corpus_hash=fingerprint(passages), queries_hash=hashlib.sha256(args.queries.read_bytes()).hexdigest(),
+    output = dict(created_at=datetime.now(timezone.utc).isoformat(), python=platform.python_version(),
+                  corpus_size=len(passages), k=3, metric="query-level hit rate: any annotated gold passage in top 3",
+                  corpus_hash=fingerprint(passages), queries_hash=hashlib.sha256(args.queries.read_bytes()).hexdigest(),
                   embedding_model=EMBEDDING_MODEL, embedding_revision=EMBEDDING_REVISION, summary=summary, queries=rows)
-    Path("eval/results").mkdir(parents=True, exist_ok=True)
     suffix = "_bm25" if args.bm25_only else ""
-    Path(f"eval/results/retrieval{suffix}.json").write_text(json.dumps(output, indent=2) + "\n")
+    (output_dir / f"retrieval{suffix}.json").write_text(json.dumps(output, indent=2) + "\n")
     lines = ["# Retrieval comparison", "", "| Method | Subset | Recall@3 |", "|---|---|---|"]
     for name, subsets in summary.items():
         for subset, value in subsets.items():
@@ -42,7 +48,7 @@ def main():
         b = bool(set(row["gold_passage_ids"]) & set(row["bm25"]))
         d = bool(set(row["gold_passage_ids"]) & set(row["dense"]))
         lines.append(f"- {row['query_id']}: {row['query']} BM25 hit: {b}; dense hit: {d}. Different rankings are not necessarily errors; review raw passage IDs in retrieval.json.")
-    Path(f"eval/results/retrieval{suffix}.md").write_text("\n".join(lines) + "\n")
+    (output_dir / f"retrieval{suffix}.md").write_text("\n".join(lines) + "\n")
     print("\n".join(lines))
 
 

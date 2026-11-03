@@ -4,7 +4,9 @@ This setup runs the existing Streamlit app and Qwen model on one Linux server.
 Ollama is private to the Docker network. Streamlit is available on the server's
 loopback interface; the optional Caddy service exposes it over HTTPS.
 
-## Verification status
+The separate Streamlit Community Cloud + Groq demo is covered by the [dated demo verification](demo-verification.md). This guide describes the Docker/Ollama deployment path.
+
+## Verification status — Docker/Oracle path
 
 On 2026-11-02, both Compose configurations validated, the local Python suite
 passed all 46 tests, and the Linux ARM64 image built successfully in Docker
@@ -20,7 +22,7 @@ listed the A1 shape and Ubuntu 24.04 ARM64 image, but launching the 2-OCPU / 12-
 instance failed with `Out of host capacity`. Oracle's capacity report also
 returned `OUT_OF_HOST_CAPACITY` for 1-OCPU / 12-GB and 1-OCPU / 8-GB configurations.
 A dedicated virtual network, internet gateway and public subnet were created;
-no compute instance or boot disk was created, and there is no live app link.
+no compute instance or boot disk was created, and this Oracle attempt produced no live app link. The separate [Community Cloud demo](demo-verification.md) is now accessible.
 The local, gitignored `runtime/deployment/oci-state.json` and
 `oci-capacity.json` preserve the resource identifiers and capacity report for
 resuming without duplicating the network. A dedicated SSH key was created at

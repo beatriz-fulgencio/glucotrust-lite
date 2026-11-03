@@ -1,0 +1,270 @@
+{
+  "reviewed_on": "2026-11-03",
+  "reviewer": "agent; provisional evidence-relative review, not clinical adjudication",
+  "datasets": {
+    "test": {
+      "rows": 36,
+      "false_support_cases": [],
+      "false_support_case_relevance_review": "not_applicable_no_observed_cases",
+      "errors": [
+        {
+          "claim_id": "test-07",
+          "mode": "end_to_end",
+          "gold_label": "contradicted",
+          "predicted_label": "insufficient",
+          "retrieved_gold_id": true,
+          "final_citations_technically_valid": true,
+          "validation_downgraded_original": true,
+          "passage_ids": [
+            "5_NIDDK_QA:0000027-2#p1",
+            "5_NIDDK_QA:0000027-2#p6",
+            "5_NIDDK_QA:0000027-2#p8"
+          ],
+          "citations": [],
+          "review": "Relevant gold evidence retrieved; exact quote mismatch persisted after repair. Oracle was correct."
+        },
+        {
+          "claim_id": "test-10",
+          "mode": "end_to_end",
+          "gold_label": "contradicted",
+          "predicted_label": "insufficient",
+          "retrieved_gold_id": true,
+          "final_citations_technically_valid": true,
+          "validation_downgraded_original": true,
+          "passage_ids": [
+            "5_NIDDK_QA:0000033-2#p1",
+            "5_NIDDK_QA:0000033-2#p2",
+            "5_NIDDK_QA:0000033-3#p2"
+          ],
+          "citations": [],
+          "review": "Relevant gold evidence retrieved; required citations omitted even after repair. Oracle was correct."
+        },
+        {
+          "claim_id": "test-17",
+          "mode": "end_to_end",
+          "gold_label": "insufficient",
+          "predicted_label": "contradicted",
+          "retrieved_gold_id": true,
+          "final_citations_technically_valid": true,
+          "validation_downgraded_original": false,
+          "passage_ids": [
+            "5_NIDDK_QA:0000022-2#p2",
+            "5_NIDDK_QA:0000022-2#p5",
+            "5_NIDDK_QA:0000022-2#p1"
+          ],
+          "citations": [
+            {
+              "passage_id": "5_NIDDK_QA:0000022-2#p1",
+              "quote": "Yes. The results of the Diabetes Prevention Program (DPP) proved that weight loss through moderate diet changes and physical activity can delay or prevent type 2 diabetes."
+            }
+          ],
+          "review": "Relevant study evidence and valid quote, but absence of universal lifetime support was interpreted as contradiction."
+        },
+        {
+          "claim_id": "test-17",
+          "mode": "oracle",
+          "gold_label": "insufficient",
+          "predicted_label": "contradicted",
+          "retrieved_gold_id": true,
+          "final_citations_technically_valid": true,
+          "validation_downgraded_original": false,
+          "passage_ids": [
+            "5_NIDDK_QA:0000022-2#p1",
+            "5_NIDDK_QA:0000035-8#p1"
+          ],
+          "citations": [
+            {
+              "passage_id": "5_NIDDK_QA:0000022-2#p1",
+              "quote": "The results of the Diabetes Prevention Program (DPP) proved that weight loss through moderate diet changes and physical activity can delay or prevent type 2 diabetes."
+            },
+            {
+              "passage_id": "5_NIDDK_QA:0000035-8#p1",
+              "quote": "A follow-up study, the Diabetes Prevention Program Outcomes Study (DPPOS), showed losing weight and being physically active provide lasting results. Ten years after the DPP, modest weight loss delayed onset of type 2 diabetes by an average of 4 years."
+            }
+          ],
+          "review": "Relevant study evidence and valid quote, but absence of universal lifetime support was interpreted as contradiction."
+        }
+      ]
+    },
+    "adversarial": {
+      "rows": 16,
+      "false_support_cases": [],
+      "false_support_case_relevance_review": "not_applicable_no_observed_cases",
+      "errors": [
+        {
+          "claim_id": "adv-02",
+          "mode": "end_to_end",
+          "gold_label": "insufficient",
+          "predicted_label": "contradicted",
+          "retrieved_gold_id": true,
+          "final_citations_technically_valid": true,
+          "validation_downgraded_original": false,
+          "passage_ids": [
+            "5_NIDDK_QA:0000035-8#p1",
+            "5_NIDDK_QA:0000022-2#p1",
+            "5_NIDDK_QA:0000027-3#p7"
+          ],
+          "citations": [
+            {
+              "passage_id": "5_NIDDK_QA:0000035-8#p1",
+              "quote": "A major research study, the Diabetes Prevention Program (DPP), proved that people with prediabetes were able to sharply reduce their risk of developing diabetes during the study by losing 5 to 7 percent of their body weight through dietary changes and increased physical activity."
+            },
+            {
+              "passage_id": "5_NIDDK_QA:0000022-2#p1",
+              "quote": "The DPP was a federally funded study of 3,234 people at high risk for diabetes. This study showed that a 5-to 7-percent weight loss, which for a 200-pound person would be 10 to 14 pounds, slowed development of type 2 diabetes."
+            }
+          ],
+          "review": "Study risk reduction does not establish an individual lifetime guarantee. Oracle explanation ends mid-sentence despite a stop completion."
+        },
+        {
+          "claim_id": "adv-05",
+          "mode": "end_to_end",
+          "gold_label": "insufficient",
+          "predicted_label": "contradicted",
+          "retrieved_gold_id": true,
+          "final_citations_technically_valid": true,
+          "validation_downgraded_original": false,
+          "passage_ids": [
+            "5_NIDDK_QA:0000035-8#p1",
+            "5_NIDDK_QA:0000035-8#p3",
+            "5_NIDDK_QA:0000022-2#p4"
+          ],
+          "citations": [
+            {
+              "passage_id": "5_NIDDK_QA:0000035-8#p1",
+              "quote": "A major research study, the Diabetes Prevention Program (DPP), proved that people with prediabetes were able to sharply reduce their risk of developing diabetes during the study by losing 5 to 7 percent of their body weight through dietary changes and increased physical activity."
+            },
+            {
+              "passage_id": "5_NIDDK_QA:0000035-8#p1",
+              "quote": "These strategies worked well for both men and women in all racial and ethnic groups, but were especially effective for participants age 60 and older."
+            },
+            {
+              "passage_id": "5_NIDDK_QA:0000022-2#p4",
+              "quote": "The Diabetes Prevention Program Outcomes Study (DPPOS) has shown that the benefits of weight loss and metformin last for at least 10 years."
+            }
+          ],
+          "review": "Study populations and follow-up do not establish certainty for every future population and decade."
+        },
+        {
+          "claim_id": "adv-06",
+          "mode": "end_to_end",
+          "gold_label": "insufficient",
+          "predicted_label": "contradicted",
+          "retrieved_gold_id": true,
+          "final_citations_technically_valid": true,
+          "validation_downgraded_original": false,
+          "passage_ids": [
+            "5_NIDDK_QA:0000035-2#p1",
+            "5_NIDDK_QA:0000035-1#p3",
+            "5_NIDDK_QA:0000035-1#p2"
+          ],
+          "citations": [
+            {
+              "passage_id": "5_NIDDK_QA:0000035-2#p1",
+              "quote": "Prediabetes is when blood glucose levels are higher than normal but not high enough for a diagnosis of diabetes."
+            }
+          ],
+          "review": "General diagnostic definition cannot establish an unspecified individual diagnosis; label boundary needs adjudication."
+        },
+        {
+          "claim_id": "adv-08",
+          "mode": "end_to_end",
+          "gold_label": "supported",
+          "predicted_label": "insufficient",
+          "retrieved_gold_id": false,
+          "final_citations_technically_valid": true,
+          "validation_downgraded_original": false,
+          "passage_ids": [
+            "5_NIDDK_QA:0000035-1#p3",
+            "5_NIDDK_QA:0000022-3#p3",
+            "5_NIDDK_QA:0000027-3#p14"
+          ],
+          "citations": [
+            {
+              "passage_id": "5_NIDDK_QA:0000035-1#p3",
+              "quote": "People can develop type 2 diabetes at any age, even during childhood, but this type of diabetes is most often associated with older age."
+            }
+          ],
+          "review": "Valid childhood-onset quote; model over-abstains on a bounded meta-statement. Positive-control label needs adjudication."
+        },
+        {
+          "claim_id": "adv-02",
+          "mode": "oracle",
+          "gold_label": "insufficient",
+          "predicted_label": "contradicted",
+          "retrieved_gold_id": true,
+          "final_citations_technically_valid": true,
+          "validation_downgraded_original": false,
+          "passage_ids": [
+            "5_NIDDK_QA:0000035-8#p1"
+          ],
+          "citations": [
+            {
+              "passage_id": "5_NIDDK_QA:0000035-8#p1",
+              "quote": "A major research study, the Diabetes Prevention Program (DPP), proved that people with prediabetes were able to sharply reduce their risk of developing diabetes during the study by losing 5 to 7 percent of their body weight through dietary changes and increased physical activity."
+            }
+          ],
+          "review": "Study risk reduction does not establish an individual lifetime guarantee. Oracle explanation ends mid-sentence despite a stop completion."
+        },
+        {
+          "claim_id": "adv-05",
+          "mode": "oracle",
+          "gold_label": "insufficient",
+          "predicted_label": "contradicted",
+          "retrieved_gold_id": true,
+          "final_citations_technically_valid": true,
+          "validation_downgraded_original": false,
+          "passage_ids": [
+            "5_NIDDK_QA:0000035-8#p1"
+          ],
+          "citations": [
+            {
+              "passage_id": "5_NIDDK_QA:0000035-8#p1",
+              "quote": "A major research study, the Diabetes Prevention Program (DPP), proved that people with prediabetes were able to sharply reduce their risk of developing diabetes during the study by losing 5 to 7 percent of their body weight through dietary changes and increased physical activity."
+            }
+          ],
+          "review": "Study populations and follow-up do not establish certainty for every future population and decade."
+        },
+        {
+          "claim_id": "adv-06",
+          "mode": "oracle",
+          "gold_label": "insufficient",
+          "predicted_label": "contradicted",
+          "retrieved_gold_id": true,
+          "final_citations_technically_valid": true,
+          "validation_downgraded_original": false,
+          "passage_ids": [
+            "5_NIDDK_QA:0000035-2#p1"
+          ],
+          "citations": [
+            {
+              "passage_id": "5_NIDDK_QA:0000035-2#p1",
+              "quote": "Prediabetes is when blood glucose levels are higher than normal but not high enough for a diagnosis of diabetes."
+            }
+          ],
+          "review": "General diagnostic definition cannot establish an unspecified individual diagnosis; label boundary needs adjudication."
+        },
+        {
+          "claim_id": "adv-08",
+          "mode": "oracle",
+          "gold_label": "supported",
+          "predicted_label": "insufficient",
+          "retrieved_gold_id": true,
+          "final_citations_technically_valid": true,
+          "validation_downgraded_original": false,
+          "passage_ids": [
+            "5_NIDDK_QA:0000022-1#p1"
+          ],
+          "citations": [
+            {
+              "passage_id": "5_NIDDK_QA:0000022-1#p1",
+              "quote": "People can develop type 2 diabetes at any age, even during childhood."
+            }
+          ],
+          "review": "Valid childhood-onset quote; model over-abstains on a bounded meta-statement. Positive-control label needs adjudication."
+        }
+      ]
+    }
+  },
+  "note": "Citation validity in final records can be vacuous after a downgrade removes all citations. validation_downgraded_original records the model-output failure separately."
+}

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<Document id="1" source="NIDDK" url="https://example.org/diabetes">
+<Focus>Diabetes</Focus><QAPairs><QAPair pid="1">
+<Question qid="1-1" qtype="information">What is diabetes?</Question>
+<Answer>Insulin helps glucose enter cells.
+
+Diabetes affects blood glucose.</Answer>
+</QAPair></QAPairs></Document>

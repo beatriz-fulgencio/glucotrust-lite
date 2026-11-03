@@ -15,3 +15,15 @@ The original XML is the provenance authority. A Kaggle copy was not downloaded o
 MedQuAD is distributed under [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/). See the [original license](https://github.com/abachaa/MedQuAD/blob/master/LICENSE.txt) and [dataset README](https://github.com/abachaa/MedQuAD/blob/master/readme.txt). No endorsement by the creators or NIH is implied. The data is supplied without warranties; the license terms apply.
 
 Asma Ben Abacha and Dina Demner-Fushman. **A Question-Entailment Approach to Question Answering.** BMC Bioinformatics 20, 511 (2019). [doi:10.1186/s12859-019-3119-4](https://doi.org/10.1186/s12859-019-3119-4).
+
+## Separately checked current references (2026-11-03)
+
+`current_references.json` links three current official NIDDK pages to narrow
+statements about childhood onset, asymptomatic kidney disease, and diabetes
+prevention. An agent compared the page text with each statement; this is not an
+independent human or clinician review. Each entry records its section, date,
+support summary, and limits of applicability. See [source review](../../docs/source-review.md).
+
+These links are supplementary reading displayed beside relevant archived
+passages. They do not replace archived text or original URLs, alter corpus
+fingerprints, become model evidence, or verify an entire historical record.

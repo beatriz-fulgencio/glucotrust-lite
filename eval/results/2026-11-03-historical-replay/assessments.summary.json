@@ -1,0 +1,222 @@
+{
+  "end_to_end": {
+    "accuracy": {
+      "n": 13,
+      "total": 18,
+      "rate": 0.7222222222222222
+    },
+    "macro_f1": 0.7252525252525253,
+    "confusion_matrix": [
+      [
+        5,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        3,
+        3,
+        0
+      ],
+      [
+        0,
+        1,
+        5,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "confusion_labels": [
+      "supported",
+      "contradicted",
+      "insufficient",
+      "unavailable"
+    ],
+    "false_support": {
+      "n": 0,
+      "total": 12,
+      "rate": 0.0
+    },
+    "abstention": {
+      "n": 5,
+      "total": 6,
+      "rate": 0.8333333333333334
+    },
+    "over_abstention": {
+      "n": 4,
+      "total": 12,
+      "rate": 0.3333333333333333
+    },
+    "availability": {
+      "n": 18,
+      "total": 18,
+      "rate": 1.0
+    },
+    "available_accuracy": 0.7222222222222222,
+    "recall_at_3": {
+      "n": 11,
+      "total": 13,
+      "rate": 0.8461538461538461
+    },
+    "validation_downgrades": 4,
+    "model_abstentions_on_insufficient": 5,
+    "unavailable_count": 0,
+    "inference_latency_seconds": {
+      "n": 18,
+      "mean": 10.900293863611111,
+      "median": 9.985494209,
+      "max": 16.800191417
+    }
+  },
+  "oracle": {
+    "accuracy": {
+      "n": 8,
+      "total": 13,
+      "rate": 0.6153846153846154
+    },
+    "macro_f1": 0.5090909090909091,
+    "confusion_matrix": [
+      [
+        4,
+        0,
+        2,
+        0
+      ],
+      [
+        0,
+        4,
+        2,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "confusion_labels": [
+      "supported",
+      "contradicted",
+      "insufficient",
+      "unavailable"
+    ],
+    "false_support": {
+      "n": 0,
+      "total": 7,
+      "rate": 0.0
+    },
+    "abstention": {
+      "n": 0,
+      "total": 1,
+      "rate": 0.0
+    },
+    "over_abstention": {
+      "n": 4,
+      "total": 12,
+      "rate": 0.3333333333333333
+    },
+    "availability": {
+      "n": 13,
+      "total": 13,
+      "rate": 1.0
+    },
+    "available_accuracy": 0.6153846153846154,
+    "validation_downgrades": 4,
+    "model_abstentions_on_insufficient": 0,
+    "unavailable_count": 0,
+    "inference_latency_seconds": {
+      "n": 13,
+      "mean": 7.755509689307693,
+      "median": 7.245698709,
+      "max": 13.293661292
+    }
+  },
+  "end_to_end_gold_subset": {
+    "accuracy": {
+      "n": 8,
+      "total": 13,
+      "rate": 0.6153846153846154
+    },
+    "macro_f1": 0.503030303030303,
+    "confusion_matrix": [
+      [
+        5,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        3,
+        3,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "confusion_labels": [
+      "supported",
+      "contradicted",
+      "insufficient",
+      "unavailable"
+    ],
+    "false_support": {
+      "n": 0,
+      "total": 7,
+      "rate": 0.0
+    },
+    "abstention": {
+      "n": 0,
+      "total": 1,
+      "rate": 0.0
+    },
+    "over_abstention": {
+      "n": 4,
+      "total": 12,
+      "rate": 0.3333333333333333
+    },
+    "availability": {
+      "n": 13,
+      "total": 13,
+      "rate": 1.0
+    },
+    "available_accuracy": 0.6153846153846154,
+    "recall_at_3": {
+      "n": 11,
+      "total": 13,
+      "rate": 0.8461538461538461
+    },
+    "validation_downgrades": 4,
+    "model_abstentions_on_insufficient": 0,
+    "unavailable_count": 0,
+    "inference_latency_seconds": {
+      "n": 13,
+      "mean": 11.466997513076922,
+      "median": 10.201265292,
+      "max": 16.800191417
+    }
+  }
+}

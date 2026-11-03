@@ -1,0 +1,49 @@
+{
+  "created_on": "2026-11-03",
+  "artifacts": [
+    {
+      "path": "eval/results/2026-11-03-historical-replay/assessments.md",
+      "sha256": "218b35d2f77e26919a89d6258a4bea9eb15da6f32d5c0b1be27473e88bd0b37a"
+    },
+    {
+      "path": "eval/results/2026-11-03-historical-replay/assessments.summary.json",
+      "sha256": "c2bc98e4ae63cedf061c5824f997541cc098dd499fb7f2422f4d7c5532bca5a0"
+    },
+    {
+      "path": "eval/results/2026-11-03-qwen-prompt-2.1/adversarial.jsonl",
+      "sha256": "f8fb082f2af56fa4adbd2581b5a1db70a595e20eefbee965f10635ec432a355b"
+    },
+    {
+      "path": "eval/results/2026-11-03-qwen-prompt-2.1/adversarial.md",
+      "sha256": "cd7d2e5c295b28ffb57b67a164f82da8561b7d4a88aa0a1c637e1dbffb88b624"
+    },
+    {
+      "path": "eval/results/2026-11-03-qwen-prompt-2.1/adversarial.summary.json",
+      "sha256": "ac00ea37053cdee46a5ce42e76d1244e2d9752a66188bbc3bfdc61a389117226"
+    },
+    {
+      "path": "eval/results/2026-11-03-qwen-prompt-2.1/case_audit.json",
+      "sha256": "1ec8a2693149cd9d7ecc638af637efae3f36448c963aecfabb633bbbffaa354d"
+    },
+    {
+      "path": "eval/results/2026-11-03-qwen-prompt-2.1/test.jsonl",
+      "sha256": "c30e285a5b1611bc99841bdeee1c0aa03fe3055326273e6e56555b7d93b2d0a3"
+    },
+    {
+      "path": "eval/results/2026-11-03-qwen-prompt-2.1/test.md",
+      "sha256": "0aa81c343c7200a3738a2644234eea6a05d01369b0c40c6cf2ff217414374e27"
+    },
+    {
+      "path": "eval/results/2026-11-03-qwen-prompt-2.1/test.summary.json",
+      "sha256": "733535841c55360e1310ca34c867cd34414e09808cfcc2b66fbc1f87a634fd44"
+    },
+    {
+      "path": "eval/results/2026-11-03-retrieval/retrieval.json",
+      "sha256": "66882fd8d031c0ac701638f4ceb7acf6c615fb9e1df3ea9428de67996e4a6420"
+    },
+    {
+      "path": "eval/results/2026-11-03-retrieval/retrieval.md",
+      "sha256": "a9c5c826028cd2bbb4bd8278505571d21ec347cb5340dae2076ad235d8672b60"
+    }
+  ]
+}

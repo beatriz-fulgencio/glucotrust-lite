@@ -1,0 +1,11 @@
+{
+  "created_on": "2026-11-03",
+  "review_status": "agent_authored_content_checked_against_passages_requires_independent_human_review",
+  "purpose": "Separate exploratory challenge set, never pooled with the original test set",
+  "original_test_annotations_modified": false,
+  "prompt_tuned_on_these_cases": false,
+  "labels_are_evidence_relative": true,
+  "note": "Gold passage IDs designate deliberately supplied challenge evidence, including irrelevant evidence. These are candidate annotations, not a completed manual or clinician review. Tempting quotes are test stimuli, never recorded model output.",
+  "sha256": "86660d80ac04e6de0e4974723ed0bbaf8528e6a42a68cd1fa7d63729b1e3b6b8",
+  "additional_review": "Agent web-assisted rationale comparison requested by author; see docs/adversarial-review.md. Frozen labels unchanged."
+}

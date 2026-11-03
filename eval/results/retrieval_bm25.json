@@ -1,0 +1,219 @@
+{
+  "corpus_hash": "335471d3abe3b8d04ff1ff53359b82d128b0ed268d7f1198e3c7d91bd51f648c",
+  "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "summary": {
+    "bm25": {
+      "overall": {
+        "n": 8,
+        "total": 15,
+        "rate": 0.5333333333333333
+      },
+      "paraphrased": {
+        "n": 2,
+        "total": 8,
+        "rate": 0.25
+      }
+    }
+  },
+  "queries": [
+    {
+      "query_id": "rq-01",
+      "query": "What causes type 1 diabetes?",
+      "gold_passage_ids": [
+        "5_NIDDK_QA:0000027-2#p1"
+      ],
+      "paraphrased": false,
+      "bm25": [
+        "5_NIDDK_QA:0000027-2#p9",
+        "5_NIDDK_QA:0000027-2#p1",
+        "5_NIDDK_QA:0000027-2#p2"
+      ]
+    },
+    {
+      "query_id": "rq-02",
+      "query": "What are the symptoms of diabetic kidney disease?",
+      "gold_passage_ids": [
+        "5_NIDDK_QA:0000033-6#p1"
+      ],
+      "paraphrased": false,
+      "bm25": [
+        "5_NIDDK_QA:0000033-6#p1",
+        "5_NIDDK_QA:0000033-12#p2",
+        "5_NIDDK_QA:0000034-3#p1"
+      ]
+    },
+    {
+      "query_id": "rq-03",
+      "query": "What is prediabetes?",
+      "gold_passage_ids": [
+        "5_NIDDK_QA:0000035-2#p1",
+        "5_NIDDK_QA:0000032-2#p1"
+      ],
+      "paraphrased": false,
+      "bm25": [
+        "5_NIDDK_QA:0000035-2#p1",
+        "5_NIDDK_QA:0000032-2#p1",
+        "5_NIDDK_QA:0000035-1#p6"
+      ]
+    },
+    {
+      "query_id": "rq-04",
+      "query": "What causes type 2 diabetes?",
+      "gold_passage_ids": [
+        "5_NIDDK_QA:0000027-3#p1"
+      ],
+      "paraphrased": false,
+      "bm25": [
+        "5_NIDDK_QA:0000027-5#p6",
+        "5_NIDDK_QA:0000027-3#p16",
+        "5_NIDDK_QA:0000027-3#p2"
+      ]
+    },
+    {
+      "query_id": "rq-05",
+      "query": "What is peripheral neuropathy?",
+      "gold_passage_ids": [
+        "5_NIDDK_QA:0000034-6#p1"
+      ],
+      "paraphrased": false,
+      "bm25": [
+        "5_NIDDK_QA:0000034-6#p1",
+        "5_NIDDK_QA:0000034-4#p3",
+        "5_NIDDK_QA:0000034-4#p1"
+      ]
+    },
+    {
+      "query_id": "rq-06",
+      "query": "What is autonomic neuropathy?",
+      "gold_passage_ids": [
+        "5_NIDDK_QA:0000034-7#p1"
+      ],
+      "paraphrased": false,
+      "bm25": [
+        "5_NIDDK_QA:0000034-7#p1",
+        "5_NIDDK_QA:0000034-4#p1",
+        "5_NIDDK_QA:0000034-4#p3"
+      ]
+    },
+    {
+      "query_id": "rq-07",
+      "query": "What are the treatments for diabetic kidney failure?",
+      "gold_passage_ids": [
+        "5_NIDDK_QA:0000033-10#p1"
+      ],
+      "paraphrased": false,
+      "bm25": [
+        "5_NIDDK_QA:0000033-10#p2",
+        "5_NIDDK_QA:0000033-1#p1",
+        "5_NIDDK_QA:0000033-10#p1"
+      ]
+    },
+    {
+      "query_id": "rq-08",
+      "query": "Can children develop the form of diabetes usually associated with adults?",
+      "gold_passage_ids": [
+        "5_NIDDK_QA:0000022-1#p1"
+      ],
+      "paraphrased": true,
+      "bm25": [
+        "5_NIDDK_QA:0000035-1#p3",
+        "5_NIDDK_QA:0000027-2#p1",
+        "5_NIDDK_QA:0000027-3#p1"
+      ]
+    },
+    {
+      "query_id": "rq-09",
+      "query": "Can damage to the renal system from high blood sugar be silent at first?",
+      "gold_passage_ids": [
+        "5_NIDDK_QA:0000033-6#p1"
+      ],
+      "paraphrased": true,
+      "bm25": [
+        "5_NIDDK_QA:0000034-7#p2",
+        "5_NIDDK_QA:0000034-7#p3",
+        "5_NIDDK_QA:0000034-1#p2"
+      ]
+    },
+    {
+      "query_id": "rq-10",
+      "query": "Why does the body's defense system destroy the cells that make insulin?",
+      "gold_passage_ids": [
+        "5_NIDDK_QA:0000027-2#p1"
+      ],
+      "paraphrased": true,
+      "bm25": [
+        "5_NIDDK_QA:0000034-7#p2",
+        "5_NIDDK_QA:0000027-7#p1",
+        "5_NIDDK_QA:0000027-2#p1"
+      ]
+    },
+    {
+      "query_id": "rq-11",
+      "query": "How can diabetes damage nerves and cause loss of feeling in the limbs?",
+      "gold_passage_ids": [
+        "5_NIDDK_QA:0000034-1#p1",
+        "5_NIDDK_QA:0000034-6#p1"
+      ],
+      "paraphrased": true,
+      "bm25": [
+        "5_NIDDK_QA:0000034-4#p2",
+        "5_NIDDK_QA:0000034-7#p2",
+        "5_NIDDK_QA:0000034-7#p3"
+      ]
+    },
+    {
+      "query_id": "rq-12",
+      "query": "Where are the body's two urine-filtering organs situated?",
+      "gold_passage_ids": [
+        "5_NIDDK_QA:0000033-2#p1"
+      ],
+      "paraphrased": true,
+      "bm25": [
+        "5_NIDDK_QA:0000033-2#p1",
+        "5_NIDDK_QA:0000033-2#p2",
+        "5_NIDDK_QA:0000032-1#p1"
+      ]
+    },
+    {
+      "query_id": "rq-13",
+      "query": "Can losing a little weight and moving more delay the onset of high blood sugar disease?",
+      "gold_passage_ids": [
+        "5_NIDDK_QA:0000022-2#p1",
+        "5_NIDDK_QA:0000035-8#p1",
+        "5_NIDDK_QA:0000032-2#p1"
+      ],
+      "paraphrased": true,
+      "bm25": [
+        "5_NIDDK_QA:0000033-12#p1",
+        "5_NIDDK_QA:0000022-9#p1",
+        "5_NIDDK_QA:0000018-1#p3"
+      ]
+    },
+    {
+      "query_id": "rq-14",
+      "query": "What happens when the body's tissues stop responding properly to the hormone that moves sugar into cells?",
+      "gold_passage_ids": [
+        "5_NIDDK_QA:0000027-3#p1"
+      ],
+      "paraphrased": true,
+      "bm25": [
+        "5_NIDDK_QA:0000032-1#p1",
+        "5_NIDDK_QA:0000027-3#p8",
+        "5_NIDDK_QA:0000027-1#p1"
+      ]
+    },
+    {
+      "query_id": "rq-15",
+      "query": "Can nerve injury interfere with digestion and regulation of arterial pressure?",
+      "gold_passage_ids": [
+        "5_NIDDK_QA:0000034-7#p1"
+      ],
+      "paraphrased": true,
+      "bm25": [
+        "5_NIDDK_QA:0000032-9#p6",
+        "5_NIDDK_QA:0000034-7#p2",
+        "5_NIDDK_QA:0000034-4#p2"
+      ]
+    }
+  ]
+}

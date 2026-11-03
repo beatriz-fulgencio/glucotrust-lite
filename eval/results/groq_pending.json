@@ -1,0 +1,16 @@
+{
+  "checked_on": "2026-11-03",
+  "status": "pending_credentials",
+  "provider": "groq",
+  "model": "openai/gpt-oss-20b",
+  "prompt_version": "2.1.0",
+  "request_interval_seconds": 60,
+  "credential_locations_checked": [
+    "environment",
+    ".env",
+    ".streamlit/secrets.toml"
+  ],
+  "metrics": null,
+  "note": "Live UI smoke checks are separate from a full evaluation. No inference-unavailable rows were fabricated.",
+  "command": "python -m scripts.run_eval --live --provider groq --model openai/gpt-oss-20b --request-interval 60 --outputs eval/results/groq-reproduction-01/test.jsonl"
+}

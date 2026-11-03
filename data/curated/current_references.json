@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "note": "Separate content comparisons, never replacement corpus passages. Verification is scoped to each statement, performed by an agent, and is not clinician review or a freshness guarantee for the whole archived record.",
+  "references": [
+    {
+      "reference_id": "current-niddk-childhood",
+      "passage_ids": ["5_NIDDK_QA:0000022-1#p1"],
+      "title": "Type 2 Diabetes — NIDDK",
+      "url": "https://www.niddk.nih.gov/health-information/diabetes/overview/what-is-diabetes/type-2-diabetes",
+      "checked_on": "2026-11-03",
+      "section": "Who is more likely to develop type 2 diabetes?",
+      "statement": "Type 2 diabetes can develop during childhood.",
+      "support_summary": "The current section explicitly includes childhood among possible ages of onset.",
+      "verification_method": "Agent compared the statement with the page body, beyond HTTP reachability.",
+      "scope_limit": "Does not establish an individual child's diagnosis or verify the rest of the archived passage."
+    },
+    {
+      "reference_id": "current-niddk-kidney",
+      "passage_ids": ["5_NIDDK_QA:0000033-6#p1"],
+      "title": "Diabetic Kidney Disease — NIDDK",
+      "url": "https://www.niddk.nih.gov/health-information/diabetes/overview/preventing-problems/diabetic-kidney-disease",
+      "checked_on": "2026-11-03",
+      "section": "How can I tell if I have diabetic kidney disease?",
+      "statement": "Diabetic kidney disease can be present without symptoms.",
+      "support_summary": "The current section says most affected people have no symptoms and describes blood and urine checks.",
+      "verification_method": "Agent compared the statement with the page body, beyond HTTP reachability.",
+      "scope_limit": "Supports asymptomatic disease, but does not reproduce or verify the archived progression and symptom list."
+    },
+    {
+      "reference_id": "current-niddk-prevention",
+      "passage_ids": ["5_NIDDK_QA:0000035-8#p1", "5_NIDDK_QA:0000035-2#p1"],
+      "title": "Preventing Type 2 Diabetes — NIDDK",
+      "url": "https://www.niddk.nih.gov/health-information/diabetes/overview/preventing-type-2-diabetes",
+      "checked_on": "2026-11-03",
+      "section": "How can I lower my chances of developing type 2 diabetes?",
+      "statement": "Modest weight loss and physical activity can help prevent or delay type 2 diabetes.",
+      "support_summary": "The current page describes reduced risk, modest weight loss and physical activity, referencing the Diabetes Prevention Program.",
+      "verification_method": "Agent compared the statement with the page body, beyond HTTP reachability.",
+      "scope_limit": "Does not establish universal or individual lifetime prevention or verify every historical study statistic."
+    }
+  ]
+}

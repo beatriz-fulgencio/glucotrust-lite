@@ -75,3 +75,24 @@ def test_literature_fallback_ui(passage, monkeypatch):
     assert any("Retrieved research excerpt" in c.value for c in at.caption)
     assert any("Literature search completed" in i.value for i in at.info)
     search.search.assert_called_once()
+
+
+def test_scoped_current_reference_is_separate_from_model_evidence(passage, monkeypatch):
+    import streamlit as st
+    from glucotrust.assess import AssessmentUnavailable
+    st.cache_resource.clear()  # Other AppTest instances may cache a different mocked retriever.
+    passage = passage.model_copy(update={"passage_id": "5_NIDDK_QA:0000033-6#p1"})
+    retriever = Mock(search=Mock(return_value=[SearchHit(passage, .9)]))
+    assessor = SimpleNamespace(model="mock", last_run={}, assess=Mock(
+        side_effect=AssessmentUnavailable("Model unavailable")))
+    monkeypatch.setenv("GLUCOTRUST_PROVIDER", "ollama")
+    monkeypatch.setattr("glucotrust.retrieve.DenseRetriever", lambda *a, **kw: retriever)
+    monkeypatch.setattr("glucotrust.assess.OllamaAssessor", lambda **kw: assessor)
+    at = AppTest.from_file(Path("app.py").resolve()).run()
+    at.text_area[0].input("Kidney disease can be asymptomatic.")
+    at.button[0].click().run()
+    assert not at.exception
+    assert any("Current reference: Diabetic Kidney Disease" in link.label for link in at.get("link_button"))
+    assert any("historical dataset content" in item.value for item in at.caption)
+    assert any("was not supplied to the model" in item.value for item in at.caption)
+    assert assessor.assess.call_args.args[1] == [passage]
