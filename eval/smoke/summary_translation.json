@@ -1,0 +1,10 @@
+{
+  "provider": "ollama",
+  "model": "qwen3:4b-instruct-2507-q4_K_M",
+  "original": "The claim 'Early diabetic kidney disease can occur without symptoms' is supported by the passage stating that 'People with diabetic kidney disease do not have symptoms in the early stages.' This directly establishes that early stages of diabetic kidney disease are asymptomatic, which aligns with the claim.",
+  "portuguese": "A afirmação 'A doença renal diabética precoce pode ocorrer sem sintomas' é sustentada pelo trecho que afirma que 'People with diabetic kidney disease do not have symptoms in the early stages.'. Isso estabelece diretamente que as fases iniciais da doença renal diabética são assimptóticas, o que alinha-se com a afirmação.",
+  "checked_on": "2026-11-03",
+  "purpose": "Display-only smoke check, not claim reassessment",
+  "source_quotes_protected": true,
+  "independent_translation_review": false
+}

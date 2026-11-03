@@ -31,7 +31,7 @@ def test_claim_to_feedback(passage, monkeypatch, tmp_path, custom_feedback_path,
     if provider == "groq":
         assert any("sent to Groq" in item.value for item in at.caption)
     at.text_area[0].input("Insulin helps glucose enter cells.")
-    at.button[0].click().run()
+    at.button(key="assess_claim").click().run()
     assert not at.exception
     assert any('class="verdict supported">Supported</div>' in item.value for item in at.html)
     assert any("Archived dataset record" in item.value for item in at.caption)
@@ -46,10 +46,10 @@ def test_claim_to_feedback(passage, monkeypatch, tmp_path, custom_feedback_path,
 
 def test_empty_claim_and_dosing_block():
     at = AppTest.from_file(Path("app.py").resolve()).run()
-    at.button[0].click().run()
+    at.button(key="assess_claim").click().run()
     assert at.error[0].value == "Enter a claim first."
     at.text_area[0].input("How much insulin should I take?")
-    at.button[0].click().run()
+    at.button(key="assess_claim").click().run()
     assert "cannot provide" in at.info[0].value
     assert not at.exception
 
@@ -69,7 +69,7 @@ def test_literature_fallback_ui(passage, monkeypatch):
     monkeypatch.setattr("glucotrust.literature.EuropePMCLiterature",lambda:search)
     at = AppTest.from_file(Path("app.py").resolve()).run()
     at.text_area[0].input("Claim requiring research")
-    at.button[0].click().run()
+    at.button(key="assess_claim").click().run()
     assert not at.exception
     assert any('class="verdict contradicted">Contradicted</div>' in item.value for item in at.html)
     assert any("Retrieved research excerpt" in c.value for c in at.caption)
@@ -90,7 +90,7 @@ def test_scoped_current_reference_is_separate_from_model_evidence(passage, monke
     monkeypatch.setattr("glucotrust.assess.OllamaAssessor", lambda **kw: assessor)
     at = AppTest.from_file(Path("app.py").resolve()).run()
     at.text_area[0].input("Kidney disease can be asymptomatic.")
-    at.button[0].click().run()
+    at.button(key="assess_claim").click().run()
     assert not at.exception
     assert any("Current reference: Diabetic Kidney Disease" in link.label for link in at.get("link_button"))
     assert any("historical dataset content" in item.value for item in at.caption)

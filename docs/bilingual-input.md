@@ -48,3 +48,27 @@ Use unused output paths. The same language option works with `--provider groq`;
 configure credentials privately and retain the default hosted pacing. A full
 bilingual evaluation, including independent translation/label review, is pending.
 The local changes have not been deployed to the hosted demo.
+
+## Portuguese display button
+
+**Traduzir título e resumo para português** switches the page title, subtitle,
+assessment headings and verdict labels to Portuguese. For an existing English
+explanation it makes a display-only translation request through the configured
+provider, cached for the current result in the browser session. **Show original /
+English** restores the original view. Selecting Portuguese input already requests
+a Portuguese explanation, so those results do not need another translation.
+
+The original assessment, verdict and citations are retained. Validated source
+quotations within the explanation are replaced by protected placeholders before
+translation and restored exactly; missing/duplicated placeholders cause translation
+to fail safely. A failed translation shows the original explanation and a warning.
+Translation may still distort unquoted reasoning and is labeled as automatic.
+Static headings require no provider request. Source passages are not translated.
+
+Verification: **92 offline tests passed**, including no reassessment on toggle,
+session reuse, exact quote restoration and translation failure. A real local
+Qwen summary translation produced Portuguese explanatory text and retained the
+protected English source quote. An initial attempt without protection translated
+the quotation despite its prompt; the protected implementation addresses that
+observed failure. No new classification score is claimed. See the separate
+[Portuguese-source feasibility review](portuguese-sources.md) for BVS/LILACS and SciELO.

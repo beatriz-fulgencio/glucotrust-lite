@@ -82,7 +82,7 @@ def test_portuguese_ui_flow(passage, monkeypatch):
     at.selectbox[0].select('Português')
     at.checkbox[0].uncheck()
     at.text_area[0].input('Insulina ajuda a glicose a entrar nas células.')
-    at.button[0].click().run()
+    at.button(key="assess_claim").click().run()
     assert not at.exception
     assessor.translate_query.assert_called_once()
     assert any('Evidência insuficiente.' in item.value for item in at.markdown)

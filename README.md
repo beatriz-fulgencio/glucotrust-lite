@@ -21,7 +21,7 @@ were tested and their limitations. Supported/insufficient results, citation disp
 
 ## English and Portuguese input
 
-Choose **English** or **Português** in the input-language selector. Portuguese claims use the configured provider to translate the search query into English, then assess the original claim with an explanation in Portuguese. Source passages and exact quotes stay in their original language. The search translation is visible and may introduce errors; it is never treated as evidence. Portuguese input adds a translation request to the selected provider. The interface remains English.
+Choose **English** or **Português** in the input-language selector. Portuguese claims use the configured provider to translate the search query into English, then assess the original claim with an explanation in Portuguese. Source passages and exact quotes stay in their original language. The search translation is visible and may introduce errors; it is never treated as evidence. Portuguese input adds a translation request to the selected provider. Use **Traduzir título e resumo para português** to translate the title and assessment summary; original evidence and citations are retained.
 
 The existing scores below describe prompt **2.1.0**, before bilingual support. Prompt **2.2.1** has separate [bilingual smoke checks](docs/bilingual-input.md), not a full new benchmark.
 
@@ -120,7 +120,7 @@ secrets, feedback, and caches out of Git. Reinstall the package after source edi
 .venv/bin/python -m scripts.run_eval  # offline replay of the historical run
 ```
 
-A GitHub Actions workflow is configured for the offline suite on Python 3.12, without provider credentials or model-weight downloads; its first hosted run is pending. [Bilingual verification](docs/bilingual-input.md): 86 tests passed. See [hosted setup](docs/free-cloud-deployment.md),
+A GitHub Actions workflow is configured for the offline suite on Python 3.12, without provider credentials or model-weight downloads; its first hosted run is pending. [Bilingual verification](docs/bilingual-input.md): 92 tests passed. See [hosted setup](docs/free-cloud-deployment.md),
 [Docker/Ollama deployment](docs/deployment.md), and
 [local configuration details](docs/local-setup.md).
 
@@ -130,3 +130,5 @@ Retrieval, interpretation, and citation fidelity fail in different ways. Supplyi
 gold evidence does not guarantee correct reasoning, and a real quotation can be
 irrelevant to a conclusion. The useful outcome is an inspectable experiment with
 explicit limitations. See [project reflection and next steps](docs/project-reflection.md).
+
+Portuguese literature options: [BVS/LILACS and SciELO feasibility review](docs/portuguese-sources.md). These sources have not been integrated.

@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT / "src"))
 
-from glucotrust.assess import create_assessor
+from glucotrust.assess import AssessmentUnavailable, create_assessor
 from glucotrust.corpus import load_corpus
 from glucotrust.feedback import save_feedback
 from glucotrust.pipeline import assess_claim, is_dosing_request
@@ -75,6 +75,19 @@ def current_references(version):
     return json.loads((ROOT / "data/curated/current_references.json").read_text())["references"]
 
 
+def toggle_portuguese():
+    st.session_state.portuguese_display = not st.session_state.get("portuguese_display", False)
+
+
+st.button("Show original / English" if st.session_state.get("portuguese_display") else "Traduzir título e resumo para português",
+          key="toggle_portuguese", on_click=toggle_portuguese)
+portuguese_display = st.session_state.get("portuguese_display", False)
+
+
+def ui_text(english, portuguese):
+    return portuguese if portuguese_display else english
+
+
 corpus_path = ROOT / "data/curated/passages.jsonl"
 record_count = corpus_record_count(corpus_path.stat().st_mtime_ns)
 st.html('<div class="site-notice"><span class="notice-icon" aria-hidden="true">ⓘ</span>'
@@ -82,7 +95,7 @@ st.html('<div class="site-notice"><span class="notice-icon" aria-hidden="true">�
         'Do not use it to make health or treatment decisions.</div>')
 st.html(f'''<div class="site-header"><div class="header-inner">
     <div class="brand"><span class="brand-pulse" aria-hidden="true">ϟ</span><div><div class="brand-name">GlucoTrust Lite</div>
-    <div class="brand-subtitle">Evidence check for diabetes-related claims</div></div></div>
+    <div class="brand-subtitle">{ui_text("Evidence check for diabetes-related claims", "Verificação de evidências sobre afirmações relacionadas ao diabetes")}</div></div></div>
     <div class="corpus-badge">Corpus: {record_count} MedQuAD records · diabetes subset</div>
     </div></div>''')
 host = os.getenv("GLUCOTRUST_OLLAMA_HOST", "http://localhost:11434")
@@ -90,9 +103,10 @@ local = urlparse(host).hostname in {"localhost", "127.0.0.1", "::1"}
 hosted = os.getenv("GLUCOTRUST_PROVIDER", "ollama").strip().lower() == "groq"
 with st.container(key="claim-card"):
     with st.form("claim_form"):
-        st.title("Check a claim against the evidence")
-        st.write("Enter a diabetes-related scientific or medical claim. The app retrieves the three closest "
-                 "passages from the corpus and assesses whether they support it, contradict it, or leave insufficient evidence to decide.")
+        st.title(ui_text("Check a claim against the evidence", "Verifique uma afirmação com base nas evidências"))
+        st.write(ui_text("Enter a diabetes-related scientific or medical claim. The app retrieves the three closest "
+                 "passages from the corpus and assesses whether they support it, contradict it, or leave insufficient evidence to decide.",
+                 "Insira uma afirmação científica ou médica relacionada ao diabetes. O aplicativo busca os três trechos mais próximos e avalia se eles sustentam ou contradizem a afirmação, ou se as evidências são insuficientes."))
         claim = st.text_area("Claim", placeholder="A low prediction error means a glucose-forecasting model is clinically safe.", max_chars=2000)
         input_language = st.selectbox("Input language / Idioma da afirmação", ["English", "Português"])
         st.caption("Portuguese claims use an English search translation; explanations follow the claim language. Source quotations remain verbatim. / Afirmações em português usam tradução para busca; as citações mantêm o idioma original.")
@@ -107,10 +121,11 @@ with st.container(key="claim-card"):
         with method:
             st.caption("Semantic retrieval · Top 3 local passages · Optional research fallback")
         with action:
-            submitted = st.form_submit_button("Assess claim →", type="primary", width="stretch")
+            submitted = st.form_submit_button("Assess claim →", key="assess_claim", type="primary", width="stretch")
 if submitted:
     st.session_state.pop("result", None)
     st.session_state.pop("feedback_saved", None)
+    st.session_state.pop("summary_translation", None)
     if not claim.strip():
         st.error("Enter a claim first.")
     elif is_dosing_request(claim):
@@ -139,28 +154,48 @@ if result:
                 with st.expander("English search translation / Tradução usada na busca"):
                     st.write(translation["english_query"])
                     st.caption("Used for retrieval only; the original claim is assessed. / Usada apenas na busca; a afirmação original é avaliada.")
-            st.html('<div class="eyebrow">Assessment</div>')
+            st.html('<div class="eyebrow">' + ui_text("Assessment", "Avaliação") + '</div>')
             if result.assessment:
                 assessment = result.assessment
-                labels = {"supported": "Supported", "contradicted": "Contradicted", "insufficient": "Insufficient evidence"}
+                labels = {"supported": ui_text("Supported", "Sustentada pelas evidências"), "contradicted": ui_text("Contradicted", "Contradita pelas evidências"), "insufficient": ui_text("Insufficient evidence", "Evidências insuficientes")}
                 st.html(f'<div class="verdict {assessment.verdict}">{labels[assessment.verdict]}</div>')
                 st.html('<div class="verdict-scale" aria-label="Assessment categories">' + ''.join(
                     f'<div class="scale-item {value}{" active" if value == assessment.verdict else ""}">'
-                    f'{label}</div>' for value, label in [("supported", "Supported"), ("insufficient", "Insufficient"), ("contradicted", "Contradicted")]
+                    f'{label}</div>' for value, label in [("supported", labels["supported"]), ("insufficient", labels["insufficient"]), ("contradicted", labels["contradicted"])]
                 ) + '</div>')
-                st.subheader("Why")
-                st.write(assessment.explanation)
+                st.subheader(ui_text("Why", "Justificativa"))
+                display_explanation = assessment.explanation
+                if portuguese_display and assessment.validation_failed:
+                    display_explanation = "A avaliação falhou na validação das citações; não foi possível estabelecer uma conclusão."
+                elif portuguese_display and result.run.get("identity", {}).get("explanation_language") != "pt":
+                    saved = st.session_state.get("summary_translation", {})
+                    if saved.get("original") != assessment.explanation:
+                        try:
+                            with st.spinner("Traduzindo o resumo…"):
+                                text = create_assessor(cache_dir=ROOT / "data/cache/assessments").translate_summary(assessment.explanation, quotes=[c.quote for c in assessment.citations])
+                            saved = {"original": assessment.explanation, "text": text}
+                        except AssessmentUnavailable as exc:
+                            saved = {"original": assessment.explanation, "error": str(exc)}
+                        st.session_state.summary_translation = saved
+                    if "text" in saved:
+                        display_explanation = saved["text"]
+                        st.caption("Tradução automática para leitura; a avaliação original e as citações não foram alteradas.")
+                        with st.expander("Resumo original"):
+                            st.write(assessment.explanation)
+                    else:
+                        st.warning("Não foi possível traduzir o resumo. A avaliação original foi mantida.")
+                st.write(display_explanation)
                 if assessment.verdict == "insufficient":
-                    st.caption("A conclusion could not be established from the available evidence. This does not prove the claim false.")
+                    st.caption(ui_text("A conclusion could not be established from the available evidence. This does not prove the claim false.", "Não foi possível estabelecer uma conclusão com as evidências disponíveis. Isso não prova que a afirmação seja falsa."))
                 if assessment.validation_failed:
                     st.warning("The assessment’s citations could not all be verified against the retrieved passages. The result is shown as insufficient evidence.")
                     with st.expander("Citation validation details"):
                         for error in assessment.validation_errors:
                             st.text(error)
             else:
-                st.subheader("Assessment unavailable")
+                st.subheader(ui_text("Assessment unavailable", "Avaliação indisponível"))
                 st.info(result.message)
-            with st.expander("Claim assessed"):
+            with st.expander(ui_text("Claim assessed", "Afirmação avaliada")):
                 st.write(result.claim)
             st.divider()
             st.caption(f"Model: {result.model} · Prompt: {result.prompt_version}")
