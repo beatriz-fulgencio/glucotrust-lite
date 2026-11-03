@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import sys
+import logging
 import html
 import json
 import re
@@ -10,6 +12,11 @@ from pathlib import Path
 import streamlit as st
 from dotenv import load_dotenv
 
+# Streamlit reruns app.py on source updates; its installed wheel can be older.
+# Use the same checked-out src package that the offline tests exercise.
+ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT / "src"))
+
 from glucotrust.assess import create_assessor
 from glucotrust.corpus import load_corpus
 from glucotrust.feedback import save_feedback
@@ -17,7 +24,6 @@ from glucotrust.pipeline import assess_claim, is_dosing_request
 from glucotrust.retrieve import DenseRetriever
 from glucotrust.literature import EuropePMCLiterature
 
-ROOT = Path(__file__).resolve().parent
 load_dotenv(ROOT / ".env")
 st.set_page_config(page_title="GlucoTrust Lite", page_icon="🔎", layout="wide")
 # Community Cloud supplies root-level secrets; load only this app's settings.
@@ -110,15 +116,19 @@ if submitted:
     elif is_dosing_request(claim):
         st.info("This prototype cannot provide personal treatment or insulin dosing advice.")
     else:
+        stage = "retrieval"
         try:
             with st.spinner("Retrieving passages and assessing evidence…"):
                 corpus = ROOT / "data/curated/passages.jsonl"
                 retriever = resources(corpus.stat().st_mtime_ns)
+                stage = "assessment"
                 st.session_state.result = assess_claim(claim, retriever, create_assessor(cache_dir=ROOT / "data/cache/assessments"),
                     literature=EuropePMCLiterature() if search_literature else None,
                     language="pt" if input_language == "Português" else "en")
         except Exception as exc:
-            st.error(f"Could not load the retrieval pipeline ({type(exc).__name__}). Check setup and the embedding-model download in README.md.")
+            logging.getLogger(__name__).exception("Claim pipeline failed during %s", stage)
+            action = "load evidence retrieval" if stage == "retrieval" else "assess the claim"
+            st.error(f"Could not {action} ({type(exc).__name__}). Check the app server logs and installation instructions in README.md.")
 result = st.session_state.get("result")
 if result:
     summary_column, evidence_column = st.columns([1, 2], gap="large")

@@ -1,4 +1,5 @@
 # Community Cloud installs the local package and its declared dependencies.
+# Rebuild the environment for the bilingual API update (package 0.1.1).
 # Select the CPU-only Torch index to avoid pulling CUDA packages on Linux.
 --extra-index-url https://download.pytorch.org/whl/cpu
 torch==2.15.0+cpu; sys_platform == "linux" and platform_machine == "x86_64"
