@@ -10,6 +10,8 @@ NLP, RAG, source traceability, and human oversight in healthcare AI.
 
 **Educational research only. Not medical advice or a clinical decision system.**
 
+New to the code? Start with the [code review guide and Mermaid diagrams](docs/code-review-guide.md).
+
 ## Live demo
 
 [Open GlucoTrust Lite](https://glucotrust-lite.streamlit.app).
