@@ -115,3 +115,25 @@ def test_toggle_back_retries_failed_translation_and_explains_quota(passage,monke
     at.button(key='toggle_portuguese').click().run()
     assert any('A insulina ajuda' in x.value for x in at.markdown)
     assert assessor.translate_summary.call_count==2
+
+
+def test_translation_and_retry_share_assessment_limit(passage, monkeypatch):
+    from glucotrust.limits import InferenceLimiter
+    now = [0.0]
+    limiter = InferenceLimiter(max_requests=1, clock=lambda: now[0])
+    monkeypatch.setattr("glucotrust.limits.InferenceLimiter", lambda **kwargs: limiter)
+    at, assessor, retriever, original = app_with_result(passage, monkeypatch)
+    at.button(key="toggle_portuguese").click().run()
+    assert not at.exception
+    assert any("limite de solicitações" in item.value for item in at.warning)
+    assessor.translate_summary.assert_not_called()
+    assert at.session_state.result.assessment.explanation == original.explanation
+    # Repeated retry clicks must still pass the same server-side gate.
+    at.button(key="retry_summary_translation").click().run()
+    assessor.translate_summary.assert_not_called()
+    now[0] = 60
+    at.button(key="retry_summary_translation").click().run()
+    assert not at.exception
+    assessor.translate_summary.assert_called_once()
+    assessor.assess.assert_called_once()
+    retriever.search.assert_called_once()

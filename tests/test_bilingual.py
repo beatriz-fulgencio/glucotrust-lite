@@ -13,13 +13,37 @@ from glucotrust.validate import Assessment
 
 
 @pytest.mark.parametrize('claim', ['Quanto de insulina devo tomar?', 'Quantas unidades de insulina devo aplicar?',
-    'Qual é a minha dosagem de insulina?', 'Calcule minha dose de insulina', 'How much insulin should I take?'])
+    'Qual é a minha dosagem de insulina?', 'Calcule minha dose de insulina', 'How much insulin should I take?',
+    'What dose of insulin should I inject?', 'Take 10 units of insulin', 'Injetar 10 unidades de insulina',
+    'Qual é a dose de insulina?', 'How many units of insulin?', 'I need an insulin dose', 'Preciso de insulina',
+    'How much long-acting insulin for my daughter?', 'Please inject insulin', 'Por favor, aplicar insulina',
+    'How much insulin should\nI take?'])
 def test_bilingual_dosing_never_calls_translation_or_retrieval(claim):
     retriever, assessor = Mock(), Mock(model='mock')
     assert is_dosing_request(claim)
     assert assess_claim(claim, retriever, assessor, language='pt').status == 'blocked'
     assessor.translate_query.assert_not_called()
     retriever.search.assert_not_called()
+
+
+@pytest.mark.parametrize('claim', [
+    'Insulin helps cells take up glucose.',
+    'People with type 1 diabetes must take insulin every day.',
+    'Insulin helps glucose enter cells.',
+    'Pessoas com diabetes tipo 1 precisam tomar insulina diariamente.',
+    'A insulina ajuda as células a captar glicose.',
+    'Qual é o papel da insulina?',
+    'How many people with diabetes take insulin?',
+    'Quantas pessoas com diabetes precisam de insulina?',
+    'Researchers calculate insulin sensitivity using glucose measurements.',
+])
+def test_scientific_insulin_claims_reach_assessment(passage, claim):
+    retriever = Mock(search=Mock(return_value=[SearchHit(passage, .8)]))
+    assessor = SimpleNamespace(model='mock', last_run={}, assess=Mock(return_value=Assessment(
+        verdict='insufficient', citations=[], explanation='Fixture result.')))
+    assert not is_dosing_request(claim)
+    assert assess_claim(claim, retriever, assessor).status == 'assessed'
+    assessor.assess.assert_called_once()
 
 
 def test_portuguese_uses_translation_for_both_searches_but_original_for_assessment(passage):

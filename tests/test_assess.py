@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import Mock
 
@@ -91,12 +92,52 @@ def test_pipeline_feedback_and_dosing(passage, tmp_path):
     client.chat.assert_not_called()
 
 
-def test_corrupt_cache_recomputed(passage, tmp_path):
+@pytest.mark.parametrize("contents", ["broken", "[]", "null", "42", "{}", '{"assessment": {}}'])
+def test_corrupt_cache_recomputed(passage, tmp_path, contents):
     client = client_response(passage)
     assessor = assessor_for(client, tmp_path)
     assessor.assess("claim", [passage])
-    next(tmp_path.glob("*.json")).write_text("broken")
+    next(tmp_path.glob("*.json")).write_text(contents)
     assessor.assess("claim", [passage])
+    assert client.chat.call_count == 2
+
+
+@pytest.mark.parametrize("error", [PermissionError, FileNotFoundError])
+def test_unreadable_cache_does_not_prevent_inference(passage, tmp_path, monkeypatch, error):
+    client = client_response(passage)
+    assessor = assessor_for(client, tmp_path)
+    assessor.assess("claim", [passage])
+    def fail_read(*args, **kwargs):
+        raise error("Cache unavailable")
+    monkeypatch.setattr(Path, "read_text", fail_read)
+    result = assessor.assess("claim", [passage])
+    assert result.verdict == "supported" and client.chat.call_count == 2
+    assert not assessor.last_run["cache_hit"]
+
+
+def test_failed_cache_write_and_cleanup_keep_completed_assessment(passage, tmp_path, monkeypatch):
+    client = client_response(passage)
+    def fail(*args, **kwargs):
+        raise PermissionError("Cache unavailable")
+    monkeypatch.setattr(Path, "replace", fail)
+    monkeypatch.setattr(Path, "unlink", fail)
+    assert assessor_for(client, tmp_path).assess("claim", [passage]).verdict == "supported"
+
+
+@pytest.mark.parametrize("damage", ["identity", "response", "citations"])
+def test_damaged_cache_metadata_or_citations_recomputed(passage, tmp_path, damage):
+    client = client_response(passage)
+    assessor = assessor_for(client, tmp_path)
+    assessor.assess("claim", [passage])
+    cache = next(tmp_path.glob("*.json"))
+    record = json.loads(cache.read_text())
+    if damage == "citations":
+        record["assessment"]["citations"][0]["quote"] = "Invented quote"
+    else:
+        record[damage] = []
+    cache.write_text(json.dumps(record))
+    result = assessor.assess("claim", [passage])
+    assert not validate_assessment(result, [passage]).validation_failed
     assert client.chat.call_count == 2
 
 

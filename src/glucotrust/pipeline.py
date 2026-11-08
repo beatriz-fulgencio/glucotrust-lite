@@ -11,10 +11,18 @@ from glucotrust.validate import ValidatedAssessment, validate_assessment
 
 
 def is_dosing_request(claim: str) -> bool:
-    normalized = "".join(c for c in unicodedata.normalize("NFD", claim.lower()) if not unicodedata.combining(c))
-    return bool(re.search(r"\b(insulin|insulina|dose|dosage|dosing|doses|dosagem|units|unidades|inject|injetar|aplicar)\b", normalized) and re.search(
-        r"\b(how (?:much|many)|should (?:i|we)|my|recommend|calculate|prescribe|give me|what (?:dose|dosage)|take|inject|"
-        r"quanto|quantas|quantos|devo|minha|meu|recomende|recomenda|calcule|calcular|prescreva|tomar|injetar|aplicar|qual)\b", normalized))
+    normalized = " ".join("".join(c for c in unicodedata.normalize("NFD", claim.lower()) if not unicodedata.combining(c)).split())
+    if not re.search(r"\b(insulin|insulina|dose|dosage|dosing|doses|dosagem|units|unidades|inject|injetar|aplicar)\b", normalized):
+        return False
+    # Action verbs alone also occur in scientific claims ("cells take up glucose").
+    personal = r"\b(?:(?:should|can|must|could) (?:i|we)|(?:i|we) (?:need|take|inject)|devo|devemos|posso|preciso)\b"
+    possession = r"\b(?:my|our|minha|meu|nossa|nosso)\s+(?:insulin|insulina|dose|dosage|dosing|dosagem|units|unidades)\b"
+    quantity = (r"\b(?:how much (?:[\w-]+ ){0,4}insulin|how many (?:units|doses)|what (?:dose|dosage)|"
+                r"quanto (?:de )?insulina|quantas (?:unidades|doses)|qual (?:e a )?(?:dose|dosagem))\b")
+    directive = (r"^(?:please |por favor,? )?(?:recommend|calculate|prescribe|give me|recomende|recomenda|calcule|calcular|prescreva|"
+                 r"take|inject|tomar|injetar|aplicar)\b|"
+                 r"\b(?:take|inject|tomar|injetar|aplicar)\s+\d")
+    return any(re.search(pattern, normalized) for pattern in (personal, possession, quantity, directive))
 
 
 @dataclass

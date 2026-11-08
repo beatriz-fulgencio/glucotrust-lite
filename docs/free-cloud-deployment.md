@@ -66,6 +66,13 @@ request is blocked without inference.
 - API authentication, rate limits, refusals, malformed responses, timeouts, and
   truncated generations remain unavailable outcomes, separate from insufficient
   evidence. No automatic paid fallback or unbounded retry is enabled.
+- The web app admits at most six assessment/translation operations per rolling
+  minute and one in-flight operation, shared across browser sessions. Configure
+  positive integers `GLUCOTRUST_REQUESTS_PER_MINUTE` and
+  `GLUCOTRUST_MAX_CONCURRENT_REQUESTS` in the app's secrets and restart to change
+  them. Citation repair and fallback remain within the assessment's slot and
+  can make additional provider calls. These process-local limits bound bursts;
+  provider quota errors still remain possible.
 - Hosted caches are isolated by provider/model, prompt, generation settings,
   schema, claim and passage fingerprint, and UTC date. Set
   `GLUCOTRUST_GROQ_REVISION` to invalidate the hosted deployment's cache manually.

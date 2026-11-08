@@ -6,6 +6,7 @@ import math
 import re
 import os
 import tempfile
+from contextlib import suppress
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -127,14 +128,17 @@ class _StructuredAssessor:
                             corpus_hash=fingerprint(passages), passage_ids=[p.passage_id for p in passages])
             key = hashlib.sha256(json.dumps(identity, sort_keys=True).encode()).hexdigest()
             path = self.cache_dir / f"{key}.json"
-            if path.exists():
-                try:
-                    cached = json.loads(path.read_text())
-                    assessment = Assessment.model_validate(cached["assessment"])
-                    self.last_run = {**cached, "cache_hit": True}
-                    return assessment
-                except (ValueError, KeyError):
-                    pass  # Replace a damaged entry only after successful inference.
+            try:
+                cached = json.loads(path.read_text())
+                if not isinstance(cached, dict) or cached.get("identity") != identity or not isinstance(cached.get("response"), dict):
+                    raise ValueError("Invalid cache record")
+                assessment = Assessment.model_validate(cached["assessment"])
+                if validate_assessment(assessment, passages).validation_failed:
+                    raise ValueError("Invalid cached citations")
+                self.last_run = {**cached, "cache_hit": True}
+                return assessment
+            except (OSError, ValueError, KeyError, TypeError):
+                pass  # Optional cache: recompute if absent, unreadable or damaged.
             messages = [
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": json.dumps({
@@ -196,7 +200,8 @@ class _StructuredAssessor:
         except OSError:
             # A cache write failure must not discard a completed assessment.
             if temporary is not None:
-                temporary.unlink(missing_ok=True)
+                with suppress(OSError):
+                    temporary.unlink(missing_ok=True)
         return assessment
 
 

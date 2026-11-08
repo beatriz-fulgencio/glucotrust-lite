@@ -35,6 +35,23 @@ otherwise cause the CLI and tests to execute different versions.
 | `GLUCOTRUST_GROQ_REVISION` | Explicit hosted-cache invalidation; default `1` |
 | `GLUCOTRUST_TIMEOUT_SECONDS` | Positive request timeout; provider defaults apply |
 | `GLUCOTRUST_FEEDBACK_PATH` | Feedback JSONL; default project-local `feedback.jsonl` |
+| `GLUCOTRUST_REQUESTS_PER_MINUTE` | Shared web-app operations per rolling 60 seconds; positive integer, default `6` |
+| `GLUCOTRUST_MAX_CONCURRENT_REQUESTS` | In-flight web-app operations; positive integer, default `1` |
+
+Admission limits apply across all browser sessions in one server process, before
+retrieval or inference. An assessment, including search translation, citation
+repair and literature fallback, occupies one operation; each summary translation
+or retry occupies another. Busy or rate-limited requests return immediately.
+Failed operations consume rate allowance and release their concurrency slot.
+Clearing Streamlit caches does not reset admission limits.
+Cached display translations and feedback saving do not consume allowance.
+Restart the app after changing limits. Limits reset on restart; multiple server
+processes would need a shared external limiter. CLI evaluations retain their
+separate request pacing and do not use the web-app limiter.
+
+The devcontainer uses Python 3.12 and retains Streamlit's default CORS and XSRF
+protections. Its setup script stops on installation errors. Rebuild an existing
+devcontainer to apply the updated interpreter and startup command.
 
 MiniLM is pinned to revision `1110a243fdf4706b3f48f1d95db1a4f5529b4d41`.
 Weights and inference caches live in ignored `data/cache/`; embeddings in ignored

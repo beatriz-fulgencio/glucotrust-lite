@@ -96,3 +96,41 @@ def test_scoped_current_reference_is_separate_from_model_evidence(passage, monke
     assert any("historical dataset content" in item.value for item in at.caption)
     assert any("was not supplied to the model" in item.value for item in at.caption)
     assert assessor.assess.call_args.args[1] == [passage]
+
+
+def test_inference_limit_is_shared_across_browser_sessions(passage, monkeypatch):
+    import streamlit as st
+    monkeypatch.setenv("GLUCOTRUST_REQUESTS_PER_MINUTE", "1")
+    monkeypatch.setenv("GLUCOTRUST_PROVIDER", "ollama")
+    retriever = Mock(search=Mock(return_value=[SearchHit(passage, .9)]))
+    assessor = SimpleNamespace(model="mock", last_run={}, assess=Mock(return_value=Assessment(
+        verdict="insufficient", citations=[], explanation="Fixture result.")))
+    monkeypatch.setattr("glucotrust.retrieve.DenseRetriever", lambda *a, **kw: retriever)
+    monkeypatch.setattr("glucotrust.assess.OllamaAssessor", lambda **kw: assessor)
+    for index in range(2):
+        # A client's clear-cache action must not reset server admission state.
+        st.cache_resource.clear()
+        at = AppTest.from_file(Path("app.py").resolve()).run()
+        at.checkbox[0].uncheck()
+        at.text_area[0].input(f"Scientific glucose claim {index}")
+        at.button(key="assess_claim").click().run()
+        assert not at.exception
+        if index == 1:
+            assert any("request limit" in item.value for item in at.warning)
+    retriever.search.assert_called_once()
+    assessor.assess.assert_called_once()
+
+
+def test_busy_app_rejects_work_before_retrieval(monkeypatch):
+    from glucotrust.limits import InferenceLimiter
+    limiter = InferenceLimiter()
+    monkeypatch.setattr("glucotrust.limits.InferenceLimiter", lambda **kwargs: limiter)
+    retriever = Mock()
+    monkeypatch.setattr("glucotrust.retrieve.DenseRetriever", retriever)
+    at = AppTest.from_file(Path("app.py").resolve()).run()
+    at.text_area[0].input("Scientific glucose claim")
+    with limiter.acquire():
+        at.button(key="assess_claim").click().run()
+    assert not at.exception
+    assert any("app is busy" in item.value for item in at.warning)
+    retriever.assert_not_called()

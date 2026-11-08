@@ -45,6 +45,8 @@ claims and do not establish reliability.
 - One bounded citation-repair attempt and optional Europe PMC literature fallback.
 - Archived-source labels, scoped current-reference links, and reviewer feedback JSONL.
 - A guard for common English and Portuguese personal insulin-dosing requests.
+- Shared web-app limits: six assessment/translation operations per minute and
+  one in flight, configurable through [local settings](docs/local-setup.md).
 
 ```text
 Original claim → English search query → MiniLM top 3 → Ollama / Groq → citation validator
@@ -132,7 +134,7 @@ and caches out of Git. Reinstall the package after source edits.
 .venv/bin/python -m scripts.run_eval  # offline replay of the historical run
 ```
 
-**94 offline tests passed.** GitHub Actions is configured for Python 3.12 without
+**135 offline tests passed.** GitHub Actions is configured for Python 3.12 without
 provider credentials or model-weight downloads; its outcome is unverified.
 See [hosted setup](docs/free-cloud-deployment.md), [Docker deployment](docs/deployment.md),
 and [local configuration](docs/local-setup.md).

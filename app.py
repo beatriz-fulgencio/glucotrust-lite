@@ -23,13 +23,15 @@ from glucotrust.feedback import save_feedback
 from glucotrust.pipeline import assess_claim, is_dosing_request
 from glucotrust.retrieve import DenseRetriever
 from glucotrust.literature import EuropePMCLiterature
+from glucotrust.limits import get_inference_limiter, InferenceLimitExceeded
 
 load_dotenv(ROOT / ".env")
 st.set_page_config(page_title="GlucoTrust Lite", page_icon="🔎", layout="wide")
 # Community Cloud supplies root-level secrets; load only this app's settings.
 try:
     for setting in ("GLUCOTRUST_PROVIDER", "GROQ_API_KEY", "GLUCOTRUST_GROQ_MODEL",
-                    "GLUCOTRUST_GROQ_REVISION", "GLUCOTRUST_TIMEOUT_SECONDS", "GLUCOTRUST_FEEDBACK_PATH"):
+                    "GLUCOTRUST_GROQ_REVISION", "GLUCOTRUST_TIMEOUT_SECONDS", "GLUCOTRUST_FEEDBACK_PATH",
+                    "GLUCOTRUST_REQUESTS_PER_MINUTE", "GLUCOTRUST_MAX_CONCURRENT_REQUESTS"):
         if setting in st.secrets:
             os.environ[setting] = str(st.secrets[setting])
 except FileNotFoundError:
@@ -142,13 +144,15 @@ if submitted:
     else:
         stage = "retrieval"
         try:
-            with st.spinner("Retrieving passages and assessing evidence…"):
+            with get_inference_limiter().acquire(), st.spinner("Retrieving passages and assessing evidence…"):
                 corpus = ROOT / "data/curated/passages.jsonl"
                 retriever = resources(corpus.stat().st_mtime_ns)
                 stage = "assessment"
                 st.session_state.result = assess_claim(claim, retriever, create_assessor(cache_dir=ROOT / "data/cache/assessments"),
                     literature=EuropePMCLiterature() if search_literature else None,
                     language="pt" if input_language == "Português" else "en")
+        except InferenceLimitExceeded as exc:
+            st.warning(str(exc))
         except Exception as exc:
             logging.getLogger(__name__).exception("Claim pipeline failed during %s", stage)
             action = "load evidence retrieval" if stage == "retrieval" else "assess the claim"
@@ -180,10 +184,10 @@ if result:
                     saved = st.session_state.get("summary_translation", {})
                     if saved.get("original") != assessment.explanation:
                         try:
-                            with st.spinner("Traduzindo o resumo…"):
+                            with get_inference_limiter().acquire(), st.spinner("Traduzindo o resumo…"):
                                 text = create_assessor(cache_dir=ROOT / "data/cache/assessments").translate_summary(assessment.explanation, quotes=[c.quote for c in assessment.citations])
                             saved = {"original": assessment.explanation, "text": text}
-                        except AssessmentUnavailable as exc:
+                        except (AssessmentUnavailable, InferenceLimitExceeded) as exc:
                             logging.getLogger(__name__).warning("Summary translation unavailable: %s", exc)
                             saved = {"original": assessment.explanation, "error": str(exc)}
                         st.session_state.summary_translation = saved
@@ -194,7 +198,9 @@ if result:
                             st.write(assessment.explanation)
                     else:
                         error = saved.get("error", "")
-                        if "usage limit" in error:
+                        if "request limit" in error or "app is busy" in error:
+                            reason = "O aplicativo está ocupado ou atingiu o limite de solicitações. Aguarde um minuto antes de tentar novamente."
+                        elif "usage limit" in error:
                             reason = "O limite de uso do provedor foi atingido. Aguarde antes de tentar novamente."
                         elif "authentication" in error or "not configured" in error:
                             reason = "O serviço de tradução precisa ser configurado pelo responsável pelo aplicativo."
