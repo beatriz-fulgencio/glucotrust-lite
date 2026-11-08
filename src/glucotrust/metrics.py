@@ -1,3 +1,4 @@
+"""Compute retrieval and evidence-classification evaluation metrics."""
 from __future__ import annotations
 
 from sklearn.metrics import accuracy_score, confusion_matrix, f1_score

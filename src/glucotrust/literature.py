@@ -13,7 +13,7 @@ from glucotrust.corpus import Passage
 from glucotrust.retrieve import BM25Retriever, SearchHit
 
 API = "https://www.ebi.ac.uk/europepmc/webservices/rest"
-STOP = set("a an the is are was were be been being of for to in on at by with and or not no never every all can cannot could may might must should does do did means proves safe unsafe safety claim prediction predictions zone zode".split())
+STOP = set("a an the is are was were be been being of for to in on at by with and or not no never every all can cannot could may might must should does do did means proves safe unsafe safety claim prediction predictions zone zode".split()) # remove common words that are not useful for literature search
 
 
 class LiteratureUnavailable(RuntimeError):
@@ -49,6 +49,7 @@ class LiteratureResult:
 
 
 class EuropePMCLiterature:
+    """Interface to Europe PMC literature search; abstracts and open-access full texts only. Model knowledge is never used as evidence, only retrieved literature passages."""
     def __init__(self, client=None):
         self.client = client
 

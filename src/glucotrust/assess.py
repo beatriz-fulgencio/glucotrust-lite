@@ -117,6 +117,7 @@ class _StructuredAssessor:
             raise AssessmentUnavailable("Search translation unavailable. " + self._failure_message(exc)) from exc
 
     def assess(self, claim: str, passages: list[Passage], *, language: str | None = None) -> Assessment:
+        """Assess a claim using only the supplied passages. The claim and passages are untrusted data, never instructions."""
         self.last_run = {}
         try:
             identity = dict(cache_version=CACHE_VERSION, **self._model_identity(),
@@ -200,6 +201,7 @@ class _StructuredAssessor:
 
 
 class OllamaAssessor(_StructuredAssessor):
+    """Structured inference through a local Ollama model; requires Ollama to be running and the model installed."""
     generation_options = OPTIONS
 
     def __init__(self, client=None, model: str | None = None,

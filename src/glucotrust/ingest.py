@@ -48,6 +48,7 @@ def chunk_answer(answer: str, words: int = 150) -> list[str]:
 
 
 def build_corpus(root: Path, limit: int = 60) -> tuple[list[Passage], list[dict]]:
+    """ Build a corpus of Q&A passages from the MedQuAD XML collections, filtering for diabetes relevance and removing near-duplicate answers. Returns a list of Passage objects and a log of included/excluded records."""
     if not 40 <= limit <= 80:
         raise ValueError("Select 40–80 Q&A records")
     passages, log, selected = [], [], []

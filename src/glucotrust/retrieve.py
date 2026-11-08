@@ -31,6 +31,7 @@ def ranked(passages: list[Passage], scores, k: int) -> list[SearchHit]:
 
 
 class BM25Retriever:
+    """ Retrieve relevant passages from a corpus using BM25 ranking. The corpus is indexed by concatenating the question and answer text of each passage."""
     def __init__(self, passages: list[Passage]):
         if not passages:
             raise ValueError("Empty corpus")
@@ -42,6 +43,7 @@ class BM25Retriever:
 
 
 class DenseRetriever:
+    """ Retrieve relevant passages from a corpus using dense vector search. The corpus is indexed by encoding the question and answer text of each passage."""
     def __init__(self, passages: list[Passage], cache_dir: str | Path = "data/curated", encoder=None, model_name: str = EMBEDDING_MODEL):
         if not passages:
             raise ValueError("Empty corpus")
